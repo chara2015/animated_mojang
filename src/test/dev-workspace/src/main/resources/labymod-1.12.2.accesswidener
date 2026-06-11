@@ -1,0 +1,74 @@
+accessWidener v1 vanilla
+
+accessible class bus
+accessible class caa
+accessible class ced
+accessible class bkr
+accessible class bus$w
+accessible class bus$v
+accessible class biq
+accessible class bus$t
+accessible class fq
+accessible class bus$x
+accessible class bus$n
+accessible class bus$s
+accessible class bus$p
+accessible class bus$g
+accessible class bus$f
+accessible class bus$e
+accessible class bus$d
+accessible class bus$k
+accessible class bus$j
+accessible class chd
+accessible class bus$h
+accessible class a
+accessible class bus$c
+accessible class bus$b
+accessible class bus$a
+extendable class gn
+accessible class bsa
+accessible class blm$a
+accessible class vp
+accessible class pl
+extendable method gn a (Ljava/io/DataOutput;)V
+accessible method vp f (Lur;)Z
+extendable method gn a (Ljava/io/DataInput;ILgh;)V
+accessible method bus x (I)V
+accessible method bus w (I)V
+accessible field caa j Lcdg;
+accessible field a y Ljava/lang/String;
+accessible field pl u Z
+accessible field bus r [Lbus$x;
+accessible field chd o Z
+accessible field bsa e F
+accessible field bus c Lbus$a;
+accessible field bus g Lbus$b;
+accessible field bus d Lbus$c;
+accessible field pl e I
+accessible field biq y Ljava/lang/String;
+accessible field fq b I
+accessible field fq c I
+accessible field fq a I
+accessible field biq z Ljava/lang/String;
+accessible field bus j Lbus$j;
+accessible field bus h Lbus$k;
+accessible field bus p Lbus$c;
+accessible field biq C I
+accessible field bus e [Lbus$c;
+accessible field bus i Lbus$n;
+accessible field bus t Lbus$c;
+accessible field bus f Lbus$h;
+accessible field bus q I
+accessible field bus n Lbus$d;
+accessible field bus l Lbus$f;
+accessible field ced a Ljava/io/File;
+accessible field bkr h Z
+accessible field biq x I
+accessible field bus m Lbus$w;
+accessible field bus o Lbus$t;
+accessible field biq A I
+accessible field biq B I
+accessible field bus u Lbus$g;
+accessible field bus$c b Z
+accessible field bus k Lbus$p;
+accessible field bus v Lbus$e;

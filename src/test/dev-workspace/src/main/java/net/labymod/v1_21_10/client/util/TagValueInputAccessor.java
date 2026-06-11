@@ -1,0 +1,6 @@
+package net.labymod.v1_21_10.client.util;
+
+/* JADX INFO: loaded from: LabyMod-4.jar:net/labymod/v1_21_10/client/util/TagValueInputAccessor.class */
+public interface TagValueInputAccessor {
+    up tag();
+}

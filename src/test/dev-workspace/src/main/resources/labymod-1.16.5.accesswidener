@@ -1,0 +1,95 @@
+accessWidener v1 vanilla
+
+accessible class djz$a
+accessible class dww
+accessible class dyi$a
+accessible class dem
+accessible class dkv
+accessible class dem$x
+accessible class acu
+accessible class eao
+accessible class ob
+accessible class eng
+accessible class dem$h
+accessible class a
+accessible class dem$i
+accessible class b
+accessible class dem$n
+accessible class abg
+accessible class ebf
+accessible class dem$p
+accessible class dlq
+accessible class dem$q
+accessible class dem$s
+accessible class gr
+accessible class dnt
+accessible class dem$t
+accessible class dyi
+accessible class com/mojang/blaze3d/systems/RenderSystem
+accessible class ekb$a
+accessible class dem$b
+accessible class dem$c
+accessible class aqm
+accessible class dem$e
+accessible class dem$f
+accessible method aqm g (Lapk;)Z
+accessible method ob <init> (Lod;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Lnp;Lnv;Ljava/lang/String;Lvk;)V
+accessible method dlq q ()I
+accessible field dyi i Ljava/util/Map;
+accessible field dnt p Z
+accessible field a g F
+accessible field gr b I
+accessible field a i F
+accessible field b f F
+accessible field ebf c Ljava/util/Map;
+accessible field dem h Ldem$n;
+accessible field b d F
+accessible field dkv C I
+accessible field b b F
+accessible field dem j Ldem$p;
+accessible field ekb$a b I
+accessible field dem t Ldem$f;
+accessible field dkv A I
+accessible field dkv y Lnr;
+accessible field dkv x I
+accessible field dem g Ldem$i;
+accessible field dem k Ldem$e;
+accessible field dkv z Lnr;
+accessible field com/mojang/blaze3d/systems/RenderSystem renderThread Ljava/lang/Thread;
+accessible field b o F
+accessible field b m F
+accessible field b k F
+accessible field b i F
+accessible field a c F
+accessible field a e F
+accessible field eao ar Z
+accessible field a a F
+accessible field eng l I
+accessible field abg a Ljava/io/File;
+accessible field a h F
+accessible field dem m Ldem$t;
+accessible field gr a I
+accessible field dem n Ldem$q;
+accessible field b g F
+accessible field gr e I
+accessible field b e F
+accessible field ekb$a c I
+accessible field dkv B I
+accessible field b c F
+accessible field ebf e Lvk;
+accessible field dem q [Ldem$x;
+accessible field b a F
+accessible field dem i Ldem$h;
+accessible field dem p I
+mutable field acu f I
+accessible field b p F
+accessible field dem f Ldem$b;
+accessible field b n F
+accessible field dem$c b Z
+accessible field b l F
+accessible field b j F
+accessible field b h F
+accessible field a d F
+accessible field a f F
+accessible field dww f F
+accessible field a b F

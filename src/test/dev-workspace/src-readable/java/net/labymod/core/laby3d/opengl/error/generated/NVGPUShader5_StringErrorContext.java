@@ -1,0 +1,84 @@
+package net.labymod.core.laby3d.opengl.error.generated;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/* JADX INFO: loaded from: LabyMod-4.jar:net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5_StringErrorContext.class */
+public final class NVGPUShader5_StringErrorContext {
+    public static Map<String, String> buildMethods() {
+        Map<String, String> methods = new HashMap<>();
+        methods.put("glUniform1i64NV(IJ)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glUniform2i64NV(IJJ)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glUniform3i64NV(IJJJ)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glUniform4i64NV(IJJJJ)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("nglUniform1i64vNV(IIJ)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glUniform1i64vNV(ILjava/nio/LongBuffer;)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("nglUniform2i64vNV(IIJ)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glUniform2i64vNV(ILjava/nio/LongBuffer;)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("nglUniform3i64vNV(IIJ)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glUniform3i64vNV(ILjava/nio/LongBuffer;)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("nglUniform4i64vNV(IIJ)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glUniform4i64vNV(ILjava/nio/LongBuffer;)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glUniform1ui64NV(IJ)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glUniform2ui64NV(IJJ)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glUniform3ui64NV(IJJJ)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glUniform4ui64NV(IJJJJ)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("nglUniform1ui64vNV(IIJ)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glUniform1ui64vNV(ILjava/nio/LongBuffer;)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("nglUniform2ui64vNV(IIJ)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glUniform2ui64vNV(ILjava/nio/LongBuffer;)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("nglUniform3ui64vNV(IIJ)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glUniform3ui64vNV(ILjava/nio/LongBuffer;)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("nglUniform4ui64vNV(IIJ)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glUniform4ui64vNV(ILjava/nio/LongBuffer;)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("nglGetUniformi64vNV(IIJ)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glGetUniformi64vNV(IILjava/nio/LongBuffer;)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glGetUniformi64NV(II)J", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("nglGetUniformui64vNV(IIJ)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glGetUniformui64vNV(IILjava/nio/LongBuffer;)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glGetUniformui64NV(II)J", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glProgramUniform1i64NV(IIJ)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glProgramUniform2i64NV(IIJJ)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glProgramUniform3i64NV(IIJJJ)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glProgramUniform4i64NV(IIJJJJ)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("nglProgramUniform1i64vNV(IIIJ)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glProgramUniform1i64vNV(IILjava/nio/LongBuffer;)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("nglProgramUniform2i64vNV(IIIJ)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glProgramUniform2i64vNV(IILjava/nio/LongBuffer;)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("nglProgramUniform3i64vNV(IIIJ)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glProgramUniform3i64vNV(IILjava/nio/LongBuffer;)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("nglProgramUniform4i64vNV(IIIJ)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glProgramUniform4i64vNV(IILjava/nio/LongBuffer;)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glProgramUniform1ui64NV(IIJ)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glProgramUniform2ui64NV(IIJJ)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glProgramUniform3ui64NV(IIJJJ)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glProgramUniform4ui64NV(IIJJJJ)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("nglProgramUniform1ui64vNV(IIIJ)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glProgramUniform1ui64vNV(IILjava/nio/LongBuffer;)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("nglProgramUniform2ui64vNV(IIIJ)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glProgramUniform2ui64vNV(IILjava/nio/LongBuffer;)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("nglProgramUniform3ui64vNV(IIIJ)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glProgramUniform3ui64vNV(IILjava/nio/LongBuffer;)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("nglProgramUniform4ui64vNV(IIIJ)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glProgramUniform4ui64vNV(IILjava/nio/LongBuffer;)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glUniform1i64vNV(I[J)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glUniform2i64vNV(I[J)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glUniform3i64vNV(I[J)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glUniform4i64vNV(I[J)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glUniform1ui64vNV(I[J)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glUniform2ui64vNV(I[J)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glUniform3ui64vNV(I[J)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glUniform4ui64vNV(I[J)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glGetUniformi64vNV(II[J)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glGetUniformui64vNV(II[J)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glProgramUniform1i64vNV(II[J)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glProgramUniform2i64vNV(II[J)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glProgramUniform3i64vNV(II[J)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glProgramUniform4i64vNV(II[J)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glProgramUniform1ui64vNV(II[J)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glProgramUniform2ui64vNV(II[J)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glProgramUniform3ui64vNV(II[J)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        methods.put("glProgramUniform4ui64vNV(II[J)V", "net/labymod/core/laby3d/opengl/error/generated/NVGPUShader5ErrorContext");
+        return methods;
+    }
+}

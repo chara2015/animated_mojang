@@ -1,0 +1,95 @@
+accessWidener v1 vanilla
+
+accessible class com/mojang/blaze3d/opengl/GlStateManager$a
+accessible class fqt$n
+accessible class hlt$a
+accessible class hlt$b
+accessible class fqt$k
+accessible class com/mojang/blaze3d/opengl/GlStateManager$e
+accessible class com/mojang/blaze3d/opengl/GlStateManager$d
+accessible class com/mojang/blaze3d/opengl/GlStateManager$c
+accessible class com/mojang/blaze3d/opengl/GlStateManager$b
+accessible class com/mojang/blaze3d/opengl/GlStateManager$i
+accessible class com/mojang/blaze3d/opengl/GlStateManager$h
+accessible class ftj$b
+extendable class gry$a
+accessible class com/mojang/blaze3d/opengl/GlStateManager$g
+accessible class yd
+accessible class com/mojang/blaze3d/opengl/GlStateManager$f
+accessible class gry$b$a
+accessible class gry$b
+accessible class grx$e
+accessible class goz$b
+accessible class goz
+accessible class fkz
+accessible class kb
+accessible class hpb
+accessible class fqt$i
+accessible class ftj
+accessible class yv
+accessible class fqt$g
+accessible class aud$a
+accessible class yz
+accessible class fhb
+accessible class atx
+accessible class fjh
+accessible class fwq$a
+accessible class fjl
+accessible class fwo$d
+accessible class awb
+accessible class com/mojang/blaze3d/opengl/GlStateManager
+accessible class atx$b
+accessible class gry
+accessible class atx$a
+accessible class aud
+accessible class hlt
+accessible class gly
+accessible class com/mojang/blaze3d/systems/RenderSystem
+accessible class fuh
+accessible class gll$b
+accessible class xu
+accessible method fwq$a a (Z)Lfir;
+accessible method fjl <init> (Ljava/lang/String;Lcom/mojang/blaze3d/textures/TextureFormat;IIII)V
+accessible method yd <init> (Lyf;Ljava/lang/Integer;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Lxe;Lxm;Ljava/lang/String;Lalr;)V
+accessible method fuh k ()I
+accessible method fjh <init> (ILjava/lang/String;)V
+accessible method gry$b$a *
+accessible method gry a (Ljava/lang/String;IZZLcom/mojang/blaze3d/pipeline/RenderPipeline;Lgry$b;)Lgry$a;
+accessible method hlt$a <init> (Ljava/util/UUID;Lcom/mojang/authlib/properties/Property;)V
+accessible method gry$a <init> (Ljava/lang/String;IZZLcom/mojang/blaze3d/pipeline/RenderPipeline;Lgry$b;)V
+accessible method gry a (Ljava/lang/String;ILcom/mojang/blaze3d/pipeline/RenderPipeline;Lgry$b;)Lgry$a;
+accessible method xu <init> (Lxh;Ljava/util/List;Lyd;)V
+accessible field gly f F
+accessible field yv b Lxg;
+accessible field goz k Ljava/util/Map;
+accessible field com/mojang/blaze3d/systems/RenderSystem shaderLightDirections [Lorg/joml/Vector3f;
+accessible field ftj az Lxg;
+accessible field fkz o Z
+accessible field atx d Latx$b;
+accessible field com/mojang/blaze3d/opengl/GlStateManager TEXTURES [Lcom/mojang/blaze3d/opengl/GlStateManager$i;
+accessible field aud e Ljava/nio/file/Path;
+accessible field kb a I
+accessible field com/mojang/blaze3d/opengl/GlStateManager DEPTH Lcom/mojang/blaze3d/opengl/GlStateManager$f;
+accessible field kb c I
+accessible field com/mojang/blaze3d/opengl/GlStateManager CULL Lcom/mojang/blaze3d/opengl/GlStateManager$e;
+accessible field kb b I
+mutable field awb g I
+accessible field com/mojang/blaze3d/opengl/GlStateManager BLEND Lcom/mojang/blaze3d/opengl/GlStateManager$a;
+accessible field com/mojang/blaze3d/opengl/GlStateManager COLOR_LOGIC Lcom/mojang/blaze3d/opengl/GlStateManager$c;
+accessible field atx$b a Ljava/io/File;
+accessible field com/mojang/blaze3d/opengl/GlStateManager SCISSOR Lcom/mojang/blaze3d/opengl/GlStateManager$h;
+accessible field com/mojang/blaze3d/systems/RenderSystem renderThread Ljava/lang/Thread;
+accessible field com/mojang/blaze3d/opengl/GlStateManager COLOR_MASK Lcom/mojang/blaze3d/opengl/GlStateManager$d;
+accessible field com/mojang/blaze3d/opengl/GlStateManager POLY_OFFSET Lcom/mojang/blaze3d/opengl/GlStateManager$g;
+accessible field yz e Lyd;
+accessible field ftj aD I
+accessible field ftj aA Lxg;
+accessible field ftj aB I
+accessible field ftj aC I
+accessible field atx$a a Ljava/io/File;
+accessible field hlt a Lorg/slf4j/Logger;
+accessible field com/mojang/blaze3d/opengl/GlStateManager$b b Z
+accessible field aud$a a Ljava/nio/file/Path;
+accessible field ftj ay I
+accessible field hpb p I
+accessible field gry$a E Lgry$b;

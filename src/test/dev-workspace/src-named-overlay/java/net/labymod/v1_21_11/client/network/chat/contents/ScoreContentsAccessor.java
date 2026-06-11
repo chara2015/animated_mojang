@@ -1,0 +1,8 @@
+package net.labymod.v1_21_11.client.network.chat.contents;
+
+/* JADX INFO: loaded from: LabyMod-4-v1_21_11-named.jar:net/labymod/v1_21_11/client/network/chat/contents/ScoreContentsAccessor.class */
+public interface ScoreContentsAccessor {
+    void setName(String str);
+
+    void setObjective(String str);
+}

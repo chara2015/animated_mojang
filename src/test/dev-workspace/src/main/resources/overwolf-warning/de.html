@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LabyMod - Overwolf Kompatibilitätswarnung</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="container">
+    <header>
+        <img src="https://labymod.net/page/tpl/assets/images/icons/wolf128x128.png"
+             alt="LabyMod Logo" class="logo">
+        <h1>Overwolf Kompatibilitätswarnung</h1>
+    </header>
+
+    <main>
+        <div class="warning-box">
+            <h2>Wichtiger Hinweis</h2>
+            <p>Wir haben festgestellt, dass <strong>Overwolf</strong> derzeit auf deinem System
+                läuft. Overwolf kann schwerwiegende Probleme mit LabyMod verursachen!</p>
+            <p>Häufige Probleme, die dabei auftreten können, sind:</p>
+            <ul>
+                <li>Abstürze des Spiels</li>
+                <li>Einfrieren von LabyMod</li>
+                <li>Deutliche Leistungseinbußen</li>
+            </ul>
+        </div>
+
+
+        <h2>Empfohlene Maßnahme</h2>
+        <p>
+            Wir empfehlen, Overwolf vor dem Starten von LabyMod vollständig zu schließen.
+            Um künftig Probleme zu vermeiden kann es auch sinnvoll sein, Overwolf aus dem Autostart
+            zu entfernen.
+        </p>
+
+        <div class="tooltip">
+            Wie beende ich Overwolf vollständig?
+            <div class="tooltip-content">
+                <strong>Schritte zum vollständigen Beenden von Overwolf:</strong>
+                <ol class="steps">
+                    <li>Rechtsklick auf das Overwolf-Symbol in der Taskleiste (unten rechts auf
+                        deinem Bildschirm)
+                    </li>
+                    <li>Wähle "Beenden" oder "Schließen" aus dem Menü</li>
+                    <li>Falls Overwolf nicht in der Taskleiste erscheint, öffne den Task-Manager
+                        (Strg+Umschalt+Esc)
+                    </li>
+                    <li>Suche nach Overwolf-Prozessen in der Liste</li>
+                    <li>Wähle jeden Overwolf-Prozess aus und klicke auf "Task beenden"</li>
+                </ol>
+            </div>
+        </div>
+
+        <p>Starte LabyMod nach dem Schließen von Overwolf neu. Anschließend sollten die Probleme
+            gelöst sein.</p>
+
+        <h2>Warum passiert das?</h2>
+        <p>
+            Overwolf "injected" sich in LabyMod – vereinfacht gesagt, es verändert von außen, wie
+            LabyMod und Minecraft im Hintergrund arbeiten. Das macht Overwolf, um Overlays anzeigen
+            zu können und Daten aus dem Spiel zu lesen. Allerdings können dabei Fehler entstehen,
+            die zu Abstürzen oder Einfrieren führen, wie es momentan passiert. Auf diese Fehler hat
+            LabyMod leider keinen Einfluss.
+        </p>
+    </main>
+
+    <footer>
+        <p>Benötigst du weitere Hilfe?</p>
+        <a href="https://labymod.net/support" class="support-link" target="_blank">Kontaktiere den
+            LabyMod Support</a>
+        <p>&copy; 2025 LabyMod. Alle Rechte vorbehalten.</p>
+
+        <div>
+            <select id="language-selector">
+                <option value="en.html">English</option>
+                <option value="de.html" selected>Deutsch</option>
+                <option value="fr.html">Français</option>
+                <option value="es.html">Español</option>
+            </select>
+        </div>
+    </footer>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+package net.labymod.v1_21_11.mixins.client.scoreboard;
+
+import net.labymod.api.Laby;
+import net.labymod.api.client.component.format.numbers.NumberFormatMapper;
+import net.labymod.api.client.scoreboard.ObjectiveRenderType;
+import net.labymod.api.client.scoreboard.ScoreboardObjective;
+import net.labymod.api.client.scoreboard.ScoreboardScore;
+import net.labymod.core.client.scoreboard.DefaultScoreboardScore;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.numbers.NumberFormat;
+import net.minecraft.world.scores.Objective;
+import net.minecraft.world.scores.ReadOnlyScoreInfo;
+import net.minecraft.world.scores.ScoreAccess;
+import net.minecraft.world.scores.ScoreHolder;
+import net.minecraft.world.scores.Scoreboard;
+import net.minecraft.world.scores.criteria.ObjectiveCriteria;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+
+/* JADX INFO: loaded from: LabyMod-4-v1_21_11-named.jar:net/labymod/v1_21_11/mixins/client/scoreboard/MixinObjective.class */
+@Mixin({Objective.class})
+public class MixinObjective implements ScoreboardObjective {
+
+    @Shadow
+    @Final
+    private Scoreboard a;
+
+    @Shadow
+    @Final
+    private String b;
+
+    @Shadow
+    private ObjectiveCriteria.RenderType f;
+
+    @Shadow
+    private Component d;
+
+    @Shadow
+    private NumberFormat h;
+
+    @NotNull
+    public String getName() {
+        return this.b;
+    }
+
+    @NotNull
+    public net.labymod.api.client.component.Component getTitle() {
+        return Laby.labyAPI().minecraft().componentMapper().fromMinecraftComponent(this.d);
+    }
+
+    /* JADX INFO: renamed from: net.labymod.v1_21_11.mixins.client.scoreboard.MixinObjective$1, reason: invalid class name */
+    /* JADX INFO: loaded from: LabyMod-4-v1_21_11-named.jar:net/labymod/v1_21_11/mixins/client/scoreboard/MixinObjective$1.class */
+    static /* synthetic */ class AnonymousClass1 {
+        static final /* synthetic */ int[] $SwitchMap$net$minecraft$world$scores$criteria$ObjectiveCriteria$RenderType = new int[ObjectiveCriteria.RenderType.values().length];
+
+        static {
+            try {
+                $SwitchMap$net$minecraft$world$scores$criteria$ObjectiveCriteria$RenderType[ObjectiveCriteria.RenderType.HEARTS.ordinal()] = 1;
+            } catch (NoSuchFieldError e) {
+            }
+            try {
+                $SwitchMap$net$minecraft$world$scores$criteria$ObjectiveCriteria$RenderType[ObjectiveCriteria.RenderType.INTEGER.ordinal()] = 2;
+            } catch (NoSuchFieldError e2) {
+            }
+        }
+    }
+
+    /* JADX INFO: Thrown type has an unknown type hierarchy: java.lang.MatchException */
+    @NotNull
+    public ObjectiveRenderType getRenderType() throws MatchException {
+        switch (AnonymousClass1.$SwitchMap$net$minecraft$world$scores$criteria$ObjectiveCriteria$RenderType[this.f.ordinal()]) {
+            case 1:
+                return ObjectiveRenderType.HEARTS;
+            case 2:
+                return ObjectiveRenderType.INTEGER;
+            default:
+                throw new MatchException((String) null, (Throwable) null);
+        }
+    }
+
+    @NotNull
+    public ScoreboardScore getOrCreateScore(@NotNull String entry) {
+        ScoreAccess scoreAccess = this.a.getOrCreatePlayerScore(ScoreHolder.forNameOnly(entry), (Objective) this);
+        return new DefaultScoreboardScore(getName(), scoreAccess.get(), Laby.references().componentMapper().fromMinecraftComponent(scoreAccess.display()), net.labymod.api.client.component.format.numbers.NumberFormat.noStyle());
+    }
+
+    @Nullable
+    public ScoreboardScore getScore(@NotNull String entry) {
+        ReadOnlyScoreInfo scoreInfo = this.a.getPlayerScoreInfo(ScoreHolder.forNameOnly(entry), (Objective) this);
+        if (scoreInfo == null) {
+            return null;
+        }
+        NumberFormatMapper numberFormatMapper = Laby.references().getNumberFormatMapper();
+        return new DefaultScoreboardScore(getName(), scoreInfo.value(), (net.labymod.api.client.component.Component) null, numberFormatMapper == null ? null : numberFormatMapper.fromMinecraft(scoreInfo.numberFormat()));
+    }
+
+    @Nullable
+    public net.labymod.api.client.component.format.numbers.NumberFormat getNumberFormat() {
+        NumberFormatMapper numberFormatMapper;
+        if (this.h == null || (numberFormatMapper = Laby.references().getNumberFormatMapper()) == null) {
+            return null;
+        }
+        return numberFormatMapper.fromMinecraft(this.h);
+    }
+}

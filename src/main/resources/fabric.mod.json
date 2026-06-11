@@ -1,0 +1,38 @@
+{
+	"schemaVersion": 1,
+	"id": "animated_mojang",
+	"version": "${version}",
+	"name": "Animated_Mojang",
+	"description": "Replaces the Minecraft loading logo with an animated Mojang Studios intro.",
+	"authors": [
+		"Animated_Mojang contributors"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/animated_mojang/icon.png",
+	"environment": "client",
+	"entrypoints": {
+		"main": [
+			"animated_mojang.AnimatedMojangMod"
+		],
+		"client": [
+			"animated_mojang.client.AnimatedMojangClient"
+		]
+	},
+	"mixins": [
+		"animated_mojang.mixins.json",
+		{
+			"config": "animated_mojang.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.19.2",
+		"minecraft": "${supported_minecraft_version}",
+		"java": ">=${java_version}",
+		"fabric-api": "*"
+	}
+}

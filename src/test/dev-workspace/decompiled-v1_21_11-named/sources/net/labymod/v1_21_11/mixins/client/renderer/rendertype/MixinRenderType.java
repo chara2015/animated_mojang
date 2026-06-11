@@ -1,0 +1,21 @@
+package net.labymod.v1_21_11.mixins.client.renderer.rendertype;
+
+import net.labymod.v1_21_11.laby3d.pipeline.RenderTypeAccessor;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+
+/* JADX INFO: loaded from: LabyMod-4-v1_21_11-named.jar:net/labymod/v1_21_11/mixins/client/renderer/rendertype/MixinRenderType.class */
+@Mixin({RenderType.class})
+public class MixinRenderType implements RenderTypeAccessor {
+
+    @Shadow
+    @Final
+    protected String d;
+
+    @Override // net.labymod.v1_21_11.laby3d.pipeline.RenderTypeAccessor
+    public String getName() {
+        return this.d;
+    }
+}

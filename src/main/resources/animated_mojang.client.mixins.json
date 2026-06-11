@@ -1,0 +1,19 @@
+{
+	"required": true,
+	"package": "animated_mojang.client.mixin",
+	"compatibilityLevel": "${java_compatibility_level}",
+	"client": [
+		"LoadingOverlayAccessor",
+		"LoadingOverlayTextureMixin",
+		"LoadingOverlayMixin",
+		"GameRendererMixin",
+		"ScreenMixin",
+		"TitleScreenMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"overwrites": {
+		"requireAnnotations": true
+	}
+}

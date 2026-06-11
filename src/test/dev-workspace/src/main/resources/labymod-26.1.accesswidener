@@ -1,0 +1,108 @@
+accessWidener v1 named
+
+accessible class net/minecraft/client/OptionInstance$OptionInstanceSliderButton
+accessible class net/minecraft/client/OptionInstance$SliderableValueSet
+accessible class net/minecraft/client/OptionInstance$IntRangeBase
+accessible class net/minecraft/client/OptionInstance$ValueSet
+
+accessible method net/minecraft/network/chat/MutableComponent <init> (Lnet/minecraft/network/chat/ComponentContents;Ljava/util/List;Lnet/minecraft/network/chat/Style;)V
+
+accessible method net/minecraft/network/chat/Style <init> (Lnet/minecraft/network/chat/TextColor;Ljava/lang/Integer;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Lnet/minecraft/network/chat/ClickEvent;Lnet/minecraft/network/chat/HoverEvent;Ljava/lang/String;Lnet/minecraft/network/chat/FontDescription;)V
+
+accessible class net/minecraft/client/gui/font/FontManager$Preparation
+
+accessible field com/mojang/blaze3d/opengl/GlStateManager$BooleanState enabled Z
+
+accessible class com/mojang/blaze3d/opengl/GlStateManager$BooleanState
+accessible class com/mojang/blaze3d/opengl/GlStateManager$BlendState
+accessible class com/mojang/blaze3d/opengl/GlStateManager$DepthState
+accessible class com/mojang/blaze3d/opengl/GlStateManager$CullState
+accessible class com/mojang/blaze3d/opengl/GlStateManager$PolygonOffsetState
+accessible class com/mojang/blaze3d/opengl/GlStateManager$ColorLogicState
+accessible class com/mojang/blaze3d/opengl/GlStateManager$ScissorState
+accessible class com/mojang/blaze3d/opengl/GlStateManager$TextureState
+accessible class com/mojang/blaze3d/opengl/GlStateManager$ColorMask
+
+accessible field com/mojang/blaze3d/opengl/GlStateManager BLEND Lcom/mojang/blaze3d/opengl/GlStateManager$BlendState;
+accessible field com/mojang/blaze3d/opengl/GlStateManager DEPTH Lcom/mojang/blaze3d/opengl/GlStateManager$DepthState;
+accessible field com/mojang/blaze3d/opengl/GlStateManager CULL Lcom/mojang/blaze3d/opengl/GlStateManager$CullState;
+accessible field com/mojang/blaze3d/opengl/GlStateManager POLY_OFFSET Lcom/mojang/blaze3d/opengl/GlStateManager$PolygonOffsetState;
+accessible field com/mojang/blaze3d/opengl/GlStateManager COLOR_LOGIC Lcom/mojang/blaze3d/opengl/GlStateManager$ColorLogicState;
+accessible field com/mojang/blaze3d/opengl/GlStateManager SCISSOR Lcom/mojang/blaze3d/opengl/GlStateManager$ScissorState;
+accessible field com/mojang/blaze3d/opengl/GlStateManager TEXTURES [Lcom/mojang/blaze3d/opengl/GlStateManager$TextureState;
+accessible field com/mojang/blaze3d/opengl/GlStateManager COLOR_MASK Lcom/mojang/blaze3d/opengl/GlStateManager$ColorMask;
+accessible field com/mojang/blaze3d/opengl/GlStateManager activeTexture I
+
+accessible field net/minecraft/client/gui/Gui title Lnet/minecraft/network/chat/Component;
+accessible field net/minecraft/client/gui/Gui subtitle Lnet/minecraft/network/chat/Component;
+accessible field net/minecraft/client/gui/Gui titleTime I
+accessible field net/minecraft/client/gui/Gui titleFadeInTime I
+accessible field net/minecraft/client/gui/Gui titleStayTime I
+accessible field net/minecraft/client/gui/Gui titleFadeOutTime I
+
+accessible class net/minecraft/client/gui/Gui$HeartType
+
+
+accessible class net/minecraft/client/resources/SkinManager$TextureCache
+accessible class net/minecraft/client/resources/SkinManager$CacheKey
+accessible method net/minecraft/client/resources/SkinManager$CacheKey <init> (Ljava/util/UUID;Lcom/mojang/authlib/properties/Property;)V
+accessible field net/minecraft/client/resources/SkinManager LOGGER Lorg/slf4j/Logger;
+
+accessible method net/minecraft/client/gui/components/EditBox getMaxLength ()I
+
+accessible field net/minecraft/network/chat/numbers/FixedFormat value Lnet/minecraft/network/chat/Component;
+accessible field net/minecraft/network/chat/numbers/StyledFormat style Lnet/minecraft/network/chat/Style;
+accessible class net/minecraft/world/scores/PlayerScores
+
+accessible class net/minecraft/client/multiplayer/ClientCommonPacketListenerImpl$PackConfirmScreen
+
+accessible field com/mojang/blaze3d/systems/RenderSystem shaderLightDirections [Lorg/joml/Vector3f;
+
+accessible field net/minecraft/core/Vec3i x I
+accessible field net/minecraft/core/Vec3i y I
+accessible field net/minecraft/core/Vec3i z I
+
+accessible field net/minecraft/client/multiplayer/MultiPlayerGameMode destroyProgress F
+
+accessible field com/mojang/blaze3d/vertex/BufferBuilder building Z
+
+accessible method com/mojang/blaze3d/opengl/GlProgram <init> (ILjava/lang/String;)V
+
+accessible class net/minecraft/server/packs/FilePackResources$SharedZipFileAccess
+accessible field net/minecraft/server/packs/FilePackResources zipFileAccess Lnet/minecraft/server/packs/FilePackResources$SharedZipFileAccess;
+accessible field net/minecraft/server/packs/FilePackResources$SharedZipFileAccess file Ljava/io/File;
+accessible field net/minecraft/server/packs/FilePackResources$FileResourcesSupplier content Ljava/io/File;
+accessible field net/minecraft/server/packs/PathPackResources root Ljava/nio/file/Path;
+accessible field net/minecraft/server/packs/PathPackResources$PathResourcesSupplier content Ljava/nio/file/Path;
+
+accessible class net/minecraft/client/gui/render/GuiRenderer$MeshToDraw
+
+accessible method com/mojang/blaze3d/opengl/GlTexture <init> (ILjava/lang/String;Lcom/mojang/blaze3d/textures/TextureFormat;IIIII)V
+accessible method com/mojang/blaze3d/opengl/GlTextureView <init> (Lcom/mojang/blaze3d/opengl/GlTexture;II)V
+
+accessible class net/minecraft/client/gui/components/AbstractSelectionList$Entry
+
+accessible field net/minecraft/client/renderer/rendertype/RenderType state Lnet/minecraft/client/renderer/rendertype/RenderSetup;
+accessible field net/minecraft/client/renderer/rendertype/RenderSetup textures Ljava/util/Map;
+accessible class net/minecraft/client/renderer/rendertype/RenderSetup$TextureBinding
+
+accessible field com/mojang/blaze3d/platform/Window allowCursorChanges Z
+
+extendable class net/minecraft/network/chat/MutableComponent
+
+accessible class com/mojang/blaze3d/opengl/GlDevice
+accessible class com/mojang/blaze3d/opengl/GlCommandEncoder
+
+accessible field net/minecraft/client/multiplayer/ServerData acceptedCodeOfConduct I
+
+mutable field net/minecraft/client/server/IntegratedServer MAX_PLAYERS I
+accessible field net/minecraft/client/server/IntegratedServer publishedPort I
+accessible field net/minecraft/server/network/ServerCommonPacketListenerImpl connection Lnet/minecraft/network/Connection;
+
+accessible class net/minecraft/client/gui/render/GuiRenderer$Draw
+
+accessible field com/mojang/blaze3d/systems/RenderSystem renderThread Ljava/lang/Thread;
+
+accessible class net/minecraft/client/gui/screens/achievement/StatsScreen$ItemStatisticsList$HeaderEntry$StatSortButton
+accessible class net/minecraft/client/gui/screens/achievement/StatsScreen$ItemStatisticsList
+accessible class net/minecraft/client/gui/screens/achievement/StatsScreen$ItemStatisticsList$HeaderEntry

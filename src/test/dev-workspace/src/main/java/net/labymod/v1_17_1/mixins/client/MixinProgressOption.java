@@ -1,0 +1,20 @@
+package net.labymod.v1_17_1.mixins.client;
+
+import net.labymod.core.client.accessor.gui.ProgressOptionAccessor;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+
+/* JADX INFO: loaded from: LabyMod-4.jar:net/labymod/v1_17_1/mixins/client/MixinProgressOption.class */
+@Mixin({dvv.class})
+public class MixinProgressOption implements ProgressOptionAccessor {
+
+    @Shadow
+    @Final
+    protected float aa;
+
+    @Override // net.labymod.core.client.accessor.gui.ProgressOptionAccessor
+    public float getSteps() {
+        return this.aa;
+    }
+}

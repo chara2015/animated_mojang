@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LabyMod - Overwolf Warning</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            background-color: #121212;
+            color: #FFFFFF;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+        .loader {
+            border: 5px solid #1B1B1B;
+            border-top: 5px solid #008FE8;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .loading-container {
+            text-align: center;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get browser language
+            var userLang = navigator.language || navigator.userLanguage;
+            userLang = userLang.toLowerCase().substring(0, 2);
+            
+            // Define supported languages
+            var supportedLangs = ['en', 'de', 'fr', 'es'];
+            
+            // Map language codes to file names
+            var langMap = {
+                'en': 'en.html',
+                'de': 'de.html',
+                'fr': 'fr.html',
+                'es': 'es.html'
+            };
+            
+            // Determine which language file to load
+            var targetLang = 'en'; // Default to English
+            
+            if (supportedLangs.includes(userLang)) {
+                targetLang = userLang;
+            }
+            
+            // Redirect to the appropriate language page
+            window.location.href = langMap[targetLang];
+        });
+    </script>
+</head>
+<body>
+    <div class="loading-container">
+        <div class="loader"></div>
+        <p>Loading...</p>
+    </div>
+</body>
+</html>

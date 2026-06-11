@@ -1,0 +1,157 @@
+package net.labymod.v26_2_snapshot_8.client.gfx.pipeline.renderer.text;
+
+import com.mojang.blaze3d.vertex.PoseStack;
+import java.util.Objects;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import net.labymod.api.client.component.Component;
+import net.labymod.api.client.gfx.pipeline.renderer.text.FontFlags;
+import net.labymod.api.client.gfx.pipeline.renderer.text.FormattedTextLayout;
+import net.labymod.api.client.gfx.pipeline.renderer.text.MinecraftFontRenderer;
+import net.labymod.api.client.gfx.pipeline.renderer.text.StringStart;
+import net.labymod.api.client.gfx.pipeline.renderer.text.state.TextState;
+import net.labymod.api.client.gfx.pipeline.renderer.text.state.TextStateBuilder;
+import net.labymod.api.client.render.font.ComponentMapper;
+import net.labymod.api.models.Implements;
+import net.labymod.api.util.CastUtil;
+import net.labymod.api.util.ide.IdeUtil;
+import net.labymod.api.util.logging.Logging;
+import net.labymod.api.util.math.MathHelper;
+import net.labymod.v26_2_snapshot_8.client.StringSplitterAccessor;
+import net.labymod.v26_2_snapshot_8.client.renderer.LevelRendererAccessor;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.StringSplitter;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.font.TextRenderable;
+import net.minecraft.client.renderer.SubmitNodeStorage;
+import net.minecraft.network.chat.Style;
+import net.minecraft.util.FormattedCharSequence;
+import org.joml.Matrix4f;
+
+/* JADX INFO: loaded from: LabyMod-4.jar:net/labymod/v26_2_snapshot_8/client/gfx/pipeline/renderer/text/VanillaFontRenderer.class */
+@Singleton
+@Implements(MinecraftFontRenderer.class)
+public class VanillaFontRenderer implements MinecraftFontRenderer {
+    private static final Logging LOGGER = Logging.getLogger();
+    private final ComponentMapper componentMapper;
+
+    @Inject
+    public VanillaFontRenderer(ComponentMapper componentMapper) {
+        this.componentMapper = componentMapper;
+    }
+
+    @Override // net.labymod.api.client.gfx.pipeline.renderer.text.FontRenderer
+    public void render(Matrix4f pose, String text, float x, float y, int argb, int packedLightCoords, int backgroundArgb, int flags) {
+        PoseStack poseStack = new PoseStack();
+        poseStack.pushPose();
+        poseStack.mulPose(pose);
+        LevelRendererAccessor self = LevelRendererAccessor.self();
+        SubmitNodeStorage storage = self.labyMod$submitNodeStorage();
+        storage.submitText(poseStack, x, y, FormattedCharSequence.forward(text, Style.EMPTY), FontFlags.isShadow(flags), getDisplayMode(flags), packedLightCoords, argb, backgroundArgb, 0);
+        poseStack.popPose();
+    }
+
+    @Override // net.labymod.api.client.gfx.pipeline.renderer.text.FontRenderer
+    public void render(Matrix4f pose, Component text, float x, float y, int argb, int packedLightCoords, int backgroundArgb, int flags) {
+        PoseStack poseStack = new PoseStack();
+        poseStack.pushPose();
+        poseStack.mulPose(pose);
+        LevelRendererAccessor self = LevelRendererAccessor.self();
+        SubmitNodeStorage storage = self.labyMod$submitNodeStorage();
+        storage.submitText(poseStack, x, y, (FormattedCharSequence) this.componentMapper.toMinecraftComponent(text), FontFlags.isShadow(flags), getDisplayMode(flags), packedLightCoords, argb, backgroundArgb, 0);
+        poseStack.popPose();
+    }
+
+    @Override // net.labymod.api.client.gfx.pipeline.renderer.text.FontRenderer
+    public void render(Matrix4f pose, FormattedTextLayout text, float x, float y, int argb, int packedLightCoords, int backgroundArgb, int flags) {
+        PoseStack poseStack = new PoseStack();
+        poseStack.pushPose();
+        poseStack.mulPose(pose);
+        LevelRendererAccessor self = LevelRendererAccessor.self();
+        SubmitNodeStorage storage = self.labyMod$submitNodeStorage();
+        storage.submitText(poseStack, x, y, ((VanillaFormattedTextLayout) text).getSequence(), FontFlags.isShadow(flags), getDisplayMode(flags), packedLightCoords, argb, backgroundArgb, 0);
+        poseStack.popPose();
+    }
+
+    @Override // net.labymod.api.client.gfx.pipeline.renderer.text.FontRenderer
+    public TextState prepareText(FormattedTextLayout textLayout, float x, float y, int argb, int packedLightCoords, int backgroundArgb, int flags) {
+        VanillaFormattedTextLayout vanillaText = (VanillaFormattedTextLayout) CastUtil.requireInstanceOf(textLayout, VanillaFormattedTextLayout.class);
+        Font font = getFont();
+        TextStateVisitor builder = new TextStateVisitor();
+        font.prepareText(vanillaText.getSequence(), x, y, argb, FontFlags.isShadow(flags), false, backgroundArgb).visit(builder);
+        return builder.build();
+    }
+
+    @Override // net.labymod.api.client.gfx.pipeline.renderer.text.FontRenderer
+    public float getWidth(String text) {
+        return getFont().width(text);
+    }
+
+    @Override // net.labymod.api.client.gfx.pipeline.renderer.text.FontRenderer
+    public float getWidth(Component text) {
+        return getFont().width((net.minecraft.network.chat.Component) this.componentMapper.toMinecraftComponent(text));
+    }
+
+    @Override // net.labymod.api.client.gfx.pipeline.renderer.text.FontRenderer
+    public float getWidth(FormattedTextLayout text) {
+        return getFont().width(((VanillaFormattedTextLayout) CastUtil.requireInstanceOf(text, VanillaFormattedTextLayout.class)).getSequence());
+    }
+
+    @Override // net.labymod.api.client.gfx.pipeline.renderer.text.FontRenderer
+    public float getLineHeight() {
+        Objects.requireNonNull(getFont());
+        return 9.0f;
+    }
+
+    @Override // net.labymod.api.client.gfx.pipeline.renderer.text.FontRenderer
+    public String trimTextToWidth(String text, float maxWidth, StringStart start) {
+        StringSplitter splitter = getFont().getSplitter();
+        if (start == StringStart.LEFT) {
+            return splitter.plainHeadByWidth(text, MathHelper.ceil(maxWidth), Style.EMPTY);
+        }
+        return splitter.plainTailByWidth(text, MathHelper.ceil(maxWidth), Style.EMPTY);
+    }
+
+    @Override // net.labymod.api.client.gfx.pipeline.renderer.text.FontRenderer
+    public float getWidth(int codepoint, net.labymod.api.client.component.format.Style style) {
+        return StringSplitterAccessor.cast(getFont().getSplitter()).getWidthProvider().getWidth(codepoint, (Style) CastUtil.cast(style));
+    }
+
+    private Font.DisplayMode getDisplayMode(int flags) {
+        FontFlags.ensureOneDisplayMode(flags);
+        if (FontFlags.hasFlag(flags, 4)) {
+            return Font.DisplayMode.NORMAL;
+        }
+        if (FontFlags.hasFlag(flags, 8)) {
+            return Font.DisplayMode.SEE_THROUGH;
+        }
+        if (FontFlags.hasFlag(flags, 16)) {
+            return Font.DisplayMode.POLYGON_OFFSET;
+        }
+        if (IdeUtil.RUNNING_IN_IDE) {
+            LOGGER.error("No display mode set for text", new Object[0]);
+        }
+        return Font.DisplayMode.NORMAL;
+    }
+
+    private Font getFont() {
+        return Minecraft.getInstance().font;
+    }
+
+    /* JADX INFO: loaded from: LabyMod-4.jar:net/labymod/v26_2_snapshot_8/client/gfx/pipeline/renderer/text/VanillaFontRenderer$TextStateVisitor.class */
+    private static class TextStateVisitor implements Font.GlyphVisitor {
+        private final TextStateBuilder builder = new TextStateBuilder();
+
+        public void acceptGlyph(TextRenderable.Styled $$0) {
+            this.builder.addGlyph(new VanillaRenderedGlyph($$0));
+        }
+
+        public void acceptEffect(TextRenderable textRenderable) {
+            this.builder.addEffect(new VanillaRenderedEffect(textRenderable));
+        }
+
+        public TextState build() {
+            return this.builder.build();
+        }
+    }
+}

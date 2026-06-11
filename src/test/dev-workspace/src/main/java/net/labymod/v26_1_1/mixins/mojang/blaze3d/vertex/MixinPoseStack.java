@@ -1,0 +1,34 @@
+package net.labymod.v26_1_1.mixins.mojang.blaze3d.vertex;
+
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.labymod.api.client.render.matrix.Stack;
+import net.labymod.api.client.render.matrix.VanillaStackAccessor;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+/* JADX INFO: loaded from: LabyMod-4.jar:net/labymod/v26_1_1/mixins/mojang/blaze3d/vertex/MixinPoseStack.class */
+@Mixin({PoseStack.class})
+public class MixinPoseStack implements VanillaStackAccessor {
+    private Stack labyMod$stack;
+
+    @Shadow
+    private int lastIndex;
+
+    @Inject(method = {"<init>"}, at = {@At("TAIL")})
+    private void labyMod$createApiStack(CallbackInfo ci) {
+        this.labyMod$stack = Stack.create(this);
+    }
+
+    @Override // net.labymod.api.client.render.matrix.VanillaStackAccessor
+    public Stack stack(Object bufferSource) {
+        return this.labyMod$stack.multiBufferSource(bufferSource);
+    }
+
+    @Override // net.labymod.api.client.render.matrix.VanillaStackAccessor
+    public int index() {
+        return this.lastIndex;
+    }
+}

@@ -1,0 +1,67 @@
+package net.minecraft.util.datafix.fixes;
+
+import com.mojang.datafixers.DSL;
+import net.minecraft.client.resources.model.UnbakedModel;
+import net.minecraft.world.entity.Display;
+import net.minecraft.world.level.SpawnData;
+
+/* JADX INFO: loaded from: minecraft-client-1.21.11-named.jar:net/minecraft/util/datafix/fixes/References.class */
+public class References {
+    public static final DSL.TypeReference LEVEL = reference("level");
+    public static final DSL.TypeReference LIGHTWEIGHT_LEVEL = reference("lightweight_level");
+    public static final DSL.TypeReference PLAYER = reference("player");
+    public static final DSL.TypeReference CHUNK = reference("chunk");
+    public static final DSL.TypeReference HOTBAR = reference("hotbar");
+    public static final DSL.TypeReference OPTIONS = reference("options");
+    public static final DSL.TypeReference STRUCTURE = reference("structure");
+    public static final DSL.TypeReference STATS = reference("stats");
+    public static final DSL.TypeReference SAVED_DATA_COMMAND_STORAGE = reference("saved_data/command_storage");
+    public static final DSL.TypeReference SAVED_DATA_TICKETS = reference("saved_data/tickets");
+    public static final DSL.TypeReference SAVED_DATA_MAP_DATA = reference("saved_data/map_data");
+    public static final DSL.TypeReference SAVED_DATA_MAP_INDEX = reference("saved_data/idcounts");
+    public static final DSL.TypeReference SAVED_DATA_RAIDS = reference("saved_data/raids");
+    public static final DSL.TypeReference SAVED_DATA_RANDOM_SEQUENCES = reference("saved_data/random_sequences");
+    public static final DSL.TypeReference SAVED_DATA_SCOREBOARD = reference("saved_data/scoreboard");
+    public static final DSL.TypeReference SAVED_DATA_STOPWATCHES = reference("saved_data/stopwatches");
+    public static final DSL.TypeReference SAVED_DATA_STRUCTURE_FEATURE_INDICES = reference("saved_data/structure_feature_indices");
+    public static final DSL.TypeReference SAVED_DATA_WORLD_BORDER = reference("saved_data/world_border");
+    public static final DSL.TypeReference ADVANCEMENTS = reference("advancements");
+    public static final DSL.TypeReference POI_CHUNK = reference("poi_chunk");
+    public static final DSL.TypeReference ENTITY_CHUNK = reference("entity_chunk");
+    public static final DSL.TypeReference DEBUG_PROFILE = reference("debug_profile");
+    public static final DSL.TypeReference BLOCK_ENTITY = reference("block_entity");
+    public static final DSL.TypeReference ITEM_STACK = reference("item_stack");
+    public static final DSL.TypeReference BLOCK_STATE = reference(Display.BlockDisplay.TAG_BLOCK_STATE);
+    public static final DSL.TypeReference FLAT_BLOCK_STATE = reference("flat_block_state");
+    public static final DSL.TypeReference DATA_COMPONENTS = reference("data_components");
+    public static final DSL.TypeReference VILLAGER_TRADE = reference("villager_trade");
+    public static final DSL.TypeReference PARTICLE = reference(UnbakedModel.PARTICLE_TEXTURE_REFERENCE);
+    public static final DSL.TypeReference TEXT_COMPONENT = reference("text_component");
+    public static final DSL.TypeReference ENTITY_EQUIPMENT = reference("entity_equipment");
+    public static final DSL.TypeReference ENTITY_NAME = reference("entity_name");
+    public static final DSL.TypeReference ENTITY_TREE = reference("entity_tree");
+    public static final DSL.TypeReference ENTITY = reference(SpawnData.ENTITY_TAG);
+    public static final DSL.TypeReference BLOCK_NAME = reference("block_name");
+    public static final DSL.TypeReference ITEM_NAME = reference("item_name");
+    public static final DSL.TypeReference GAME_EVENT_NAME = reference("game_event_name");
+    public static final DSL.TypeReference UNTAGGED_SPAWNER = reference("untagged_spawner");
+    public static final DSL.TypeReference STRUCTURE_FEATURE = reference("structure_feature");
+    public static final DSL.TypeReference OBJECTIVE = reference("objective");
+    public static final DSL.TypeReference TEAM = reference("team");
+    public static final DSL.TypeReference RECIPE = reference("recipe");
+    public static final DSL.TypeReference BIOME = reference("biome");
+    public static final DSL.TypeReference MULTI_NOISE_BIOME_SOURCE_PARAMETER_LIST = reference("multi_noise_biome_source_parameter_list");
+    public static final DSL.TypeReference WORLD_GEN_SETTINGS = reference("world_gen_settings");
+
+    public static DSL.TypeReference reference(final String $$0) {
+        return new DSL.TypeReference() { // from class: net.minecraft.util.datafix.fixes.References.1
+            public String typeName() {
+                return $$0;
+            }
+
+            public String toString() {
+                return "@" + $$0;
+            }
+        };
+    }
+}

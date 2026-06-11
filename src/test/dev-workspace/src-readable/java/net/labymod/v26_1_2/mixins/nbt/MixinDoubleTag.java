@@ -1,0 +1,22 @@
+package net.labymod.v26_1_2.mixins.nbt;
+
+import net.labymod.api.nbt.tags.NBTTagDouble;
+import net.minecraft.nbt.DoubleTag;
+import org.spongepowered.asm.mixin.Implements;
+import org.spongepowered.asm.mixin.Interface;
+import org.spongepowered.asm.mixin.Intrinsic;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+
+/* JADX INFO: loaded from: LabyMod-4.jar:net/labymod/v26_1_2/mixins/nbt/MixinDoubleTag.class */
+@Mixin({DoubleTag.class})
+@Implements({@Interface(iface = NBTTagDouble.class, prefix = "labyMod$", remap = Interface.Remap.NONE)})
+public abstract class MixinDoubleTag implements NBTTagDouble {
+    @Shadow
+    public abstract double shadow$value();
+
+    @Intrinsic
+    public Double labyMod$value() {
+        return Double.valueOf(shadow$value());
+    }
+}

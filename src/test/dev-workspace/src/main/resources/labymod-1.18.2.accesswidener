@@ -1,0 +1,81 @@
+accessWidener v1 vanilla
+
+accessible class hh
+accessible class dyr$b
+accessible class fec
+accessible class eoq
+accessible class eoq$a
+accessible class agn
+accessible class emv
+accessible class eam
+accessible class fax$a
+accessible class aex
+accessible class era
+accessible class dzq
+accessible class qr
+accessible class dzq$a
+accessible class d
+accessible class qu
+accessible class com/mojang/blaze3d/platform/GlStateManager$a
+accessible class com/mojang/blaze3d/platform/GlStateManager
+accessible class com/mojang/blaze3d/platform/GlStateManager$f
+accessible class com/mojang/blaze3d/platform/GlStateManager$h
+accessible class com/mojang/blaze3d/platform/GlStateManager$i
+accessible class com/mojang/blaze3d/platform/GlStateManager$b
+accessible class com/mojang/blaze3d/platform/GlStateManager$c
+accessible class com/mojang/blaze3d/platform/GlStateManager$d
+accessible class com/mojang/blaze3d/platform/GlStateManager$e
+accessible class com/mojang/blaze3d/systems/RenderSystem
+accessible class com/mojang/blaze3d/platform/GlStateManager$j
+accessible class com/mojang/blaze3d/platform/GlStateManager$k
+accessible class com/mojang/blaze3d/platform/GlStateManager$l
+accessible method dzq$a a (Lboj;)Ldzq$a;
+accessible method dzq$a a (ZZ)I
+accessible method eam r ()I
+accessible method qu <init> (Lqw;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Lqi;Lqo;Ljava/lang/String;Lyt;)V
+accessible field fax$a c I
+accessible field era bK Z
+accessible field emv f F
+accessible field fec u I
+accessible field d i F
+accessible field hh c I
+mutable field agn f I
+accessible field com/mojang/blaze3d/platform/GlStateManager STENCIL Lcom/mojang/blaze3d/platform/GlStateManager$k;
+accessible field d h F
+accessible field d f F
+accessible field d g F
+accessible field hh a I
+accessible field hh b I
+accessible field d d F
+accessible field d e F
+accessible field d b F
+accessible field d c F
+accessible field d a F
+accessible field com/mojang/blaze3d/platform/GlStateManager TEXTURES [Lcom/mojang/blaze3d/platform/GlStateManager$l;
+accessible field com/mojang/blaze3d/systems/RenderSystem shaderLightDirections [Lk;
+accessible field qr e Ljava/util/Optional;
+accessible field aex a Ljava/io/File;
+accessible field com/mojang/blaze3d/platform/GlStateManager COLOR_LOGIC Lcom/mojang/blaze3d/platform/GlStateManager$c;
+accessible field eoq j Ljava/util/Map;
+accessible field com/mojang/blaze3d/platform/GlStateManager SCISSOR Lcom/mojang/blaze3d/platform/GlStateManager$i;
+accessible field com/mojang/blaze3d/systems/RenderSystem renderThread Ljava/lang/Thread;
+accessible field dzq L Lqk;
+accessible field d p F
+accessible field d o F
+accessible field d n F
+accessible field d m F
+accessible field com/mojang/blaze3d/platform/GlStateManager BLEND Lcom/mojang/blaze3d/platform/GlStateManager$a;
+accessible field d l F
+accessible field com/mojang/blaze3d/platform/GlStateManager$b b Z
+accessible field d k F
+accessible field dzq K Lqk;
+accessible field d j F
+accessible field dzq J I
+accessible field dzq M I
+accessible field com/mojang/blaze3d/platform/GlStateManager CULL Lcom/mojang/blaze3d/platform/GlStateManager$e;
+accessible field dzq N I
+accessible field com/mojang/blaze3d/platform/GlStateManager DEPTH Lcom/mojang/blaze3d/platform/GlStateManager$f;
+accessible field dzq O I
+accessible field com/mojang/blaze3d/platform/GlStateManager COLOR_MASK Lcom/mojang/blaze3d/platform/GlStateManager$d;
+accessible field fax$a b I
+accessible field com/mojang/blaze3d/platform/GlStateManager POLY_OFFSET Lcom/mojang/blaze3d/platform/GlStateManager$h;

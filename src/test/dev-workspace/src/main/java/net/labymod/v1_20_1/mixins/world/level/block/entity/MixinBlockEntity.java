@@ -1,0 +1,39 @@
+package net.labymod.v1_20_1.mixins.world.level.block.entity;
+
+import net.labymod.api.client.blockentity.BlockEntity;
+import net.labymod.api.client.world.block.BlockPosition;
+import org.jetbrains.annotations.NotNull;
+import org.spongepowered.asm.mixin.Implements;
+import org.spongepowered.asm.mixin.Interface;
+import org.spongepowered.asm.mixin.Intrinsic;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+
+/* JADX INFO: loaded from: LabyMod-4.jar:net/labymod/v1_20_1/mixins/world/level/block/entity/MixinBlockEntity.class */
+@Mixin({czn.class})
+@Implements({@Interface(prefix = "labyMod$", iface = BlockEntity.class, remap = Interface.Remap.NONE)})
+public abstract class MixinBlockEntity implements BlockEntity {
+
+    @Shadow
+    protected boolean q;
+
+    @Shadow
+    public abstract gu p();
+
+    @Shadow
+    public abstract boolean r();
+
+    @Shadow
+    public abstract dcb q();
+
+    @Override // net.labymod.api.client.blockentity.BlockEntity
+    @NotNull
+    public BlockPosition position() {
+        return p();
+    }
+
+    @Intrinsic
+    public boolean labyMod$isRemoved() {
+        return r();
+    }
+}

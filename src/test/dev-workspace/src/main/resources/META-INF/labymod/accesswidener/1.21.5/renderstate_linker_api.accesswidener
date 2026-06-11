@@ -1,0 +1,11 @@
+accessWidener v1 vanilla
+
+accessible class grx$j
+accessible class grx
+accessible class grw
+accessible class grx$f
+accessible field grx j Lgrx$d;
+accessible field grw aJ Lcom/mojang/blaze3d/pipeline/RenderPipeline$Snippet;
+accessible field grx k Lgrx$d;
+accessible field grx l Lgrx$i;
+accessible field grx m Lgrx$i;

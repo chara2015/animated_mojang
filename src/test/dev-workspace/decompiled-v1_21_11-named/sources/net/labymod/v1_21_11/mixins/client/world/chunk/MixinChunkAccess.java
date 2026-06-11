@@ -1,0 +1,131 @@
+package net.labymod.v1_21_11.mixins.client.world.chunk;
+
+import java.util.Map;
+import net.labymod.api.client.world.block.BlockState;
+import net.labymod.api.client.world.chunk.Chunk;
+import net.labymod.api.client.world.chunk.HeightmapType;
+import net.labymod.api.util.debug.Preconditions;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.chunk.EmptyLevelChunk;
+import net.minecraft.world.level.chunk.LevelChunkSection;
+import net.minecraft.world.level.levelgen.Heightmap;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+
+/* JADX INFO: loaded from: LabyMod-4-v1_21_11-named.jar:net/labymod/v1_21_11/mixins/client/world/chunk/MixinChunkAccess.class */
+@Mixin({ChunkAccess.class})
+public abstract class MixinChunkAccess implements Chunk {
+
+    @Shadow
+    @Final
+    protected LevelChunkSection[] l;
+
+    @Shadow
+    @Final
+    protected ChunkPos c;
+
+    @Shadow
+    @Final
+    protected Map<BlockPos, BlockEntity> j;
+
+    @Shadow
+    public abstract Heightmap a(Heightmap.Types types);
+
+    @Shadow
+    public abstract LevelChunkSection b(int i);
+
+    @Shadow
+    public abstract LevelChunkSection[] d();
+
+    @Shadow
+    public abstract int K_();
+
+    public int getChunkX() {
+        return this.c.x;
+    }
+
+    public int getChunkZ() {
+        return this.c.z;
+    }
+
+    public int getAbsoluteBlockX(int chunkBlockX) {
+        return this.c.getBlockX(chunkBlockX);
+    }
+
+    public int getAbsoluteBlockZ(int chunkBlockZ) {
+        return this.c.getBlockZ(chunkBlockZ);
+    }
+
+    public net.labymod.api.client.world.chunk.Heightmap heightmap(HeightmapType type) {
+        Preconditions.notNull(type, "type");
+        return a(Heightmap.Types.WORLD_SURFACE);
+    }
+
+    public boolean isLoaded() {
+        return !(this instanceof EmptyLevelChunk);
+    }
+
+    public BlockState getBlockState(int x, int y, int z) {
+        int index = ((ChunkAccess) this).getSectionIndex(y);
+        if (index < 0 || index >= this.l.length) {
+            return Blocks.AIR.defaultBlockState();
+        }
+        LevelChunkSection section = this.l[index];
+        if (section == null) {
+            return Blocks.AIR.defaultBlockState();
+        }
+        int yPos = y & 15;
+        BlockState blockState = section.getBlockState(x, yPos, z);
+        blockState.setCoordinates(getAbsoluteBlockX(x), y, getAbsoluteBlockZ(z));
+        return blockState;
+    }
+
+    public net.labymod.api.client.blockentity.BlockEntity[] getBlockEntities() {
+        net.labymod.api.client.blockentity.BlockEntity[] blockEntities = new net.labymod.api.client.blockentity.BlockEntity[this.j.size()];
+        int index = 0;
+        for (Map.Entry<BlockPos, BlockEntity> entry : this.j.entrySet()) {
+            int i = index;
+            index++;
+            blockEntities[i] = (net.labymod.api.client.blockentity.BlockEntity) entry.getValue();
+        }
+        return blockEntities;
+    }
+
+    public int getHeightBasedOnSection(int startY) {
+        LevelChunkSection[] sections = d();
+        if (sections.length == 0) {
+            return 0;
+        }
+        int bottomY = K_();
+        int startSectionIndex = Math.min((startY - bottomY) >> 4, sections.length - 1);
+        if (startSectionIndex < 0) {
+            startSectionIndex = 0;
+        }
+        int result = 0;
+        for (int index = startSectionIndex; index < sections.length; index++) {
+            LevelChunkSection section = sections[index];
+            if (section != null && !section.hasOnlyAir()) {
+                result = bottomY + (index << 4) + 15;
+            }
+        }
+        if (result != 0) {
+            return result;
+        }
+        if (startSectionIndex == 0) {
+            return 0;
+        }
+        for (int index2 = startSectionIndex - 1; index2 >= 0; index2--) {
+            LevelChunkSection section2 = sections[index2];
+            if (section2 != null && !section2.hasOnlyAir()) {
+                int result2 = bottomY + (index2 << 4) + 15;
+                return result2;
+            }
+        }
+        return result;
+    }
+}

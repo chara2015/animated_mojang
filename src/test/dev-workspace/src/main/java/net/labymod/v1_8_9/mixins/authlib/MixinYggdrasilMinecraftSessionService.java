@@ -1,0 +1,41 @@
+package net.labymod.v1_8_9.mixins.authlib;
+
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.exceptions.AuthenticationException;
+import com.mojang.authlib.exceptions.AuthenticationUnavailableException;
+import com.mojang.authlib.exceptions.InvalidCredentialsException;
+import com.mojang.authlib.yggdrasil.YggdrasilMinecraftSessionService;
+import java.util.concurrent.ExecutionException;
+import net.labymod.api.Laby;
+import net.labymod.api.client.session.Session;
+import net.labymod.core.client.session.DefaultSession;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
+
+/* JADX INFO: loaded from: LabyMod-4.jar:net/labymod/v1_8_9/mixins/authlib/MixinYggdrasilMinecraftSessionService.class */
+@Mixin(value = {YggdrasilMinecraftSessionService.class}, remap = false)
+public abstract class MixinYggdrasilMinecraftSessionService {
+    /* JADX INFO: Thrown type has an unknown type hierarchy: com.mojang.authlib.exceptions.AuthenticationException */
+    /* JADX INFO: Thrown type has an unknown type hierarchy: com.mojang.authlib.exceptions.AuthenticationUnavailableException */
+    /* JADX INFO: Thrown type has an unknown type hierarchy: com.mojang.authlib.exceptions.InvalidCredentialsException */
+    @Overwrite
+    public void joinServer(GameProfile profile, String authenticationToken, String serverId) throws AuthenticationException, InvalidCredentialsException, AuthenticationUnavailableException {
+        try {
+            Laby.references().minecraftAuthenticator().joinServer(new DefaultSession(profile.getName(), profile.getId(), authenticationToken, Session.Type.MOJANG), serverId, -127).get();
+        } catch (InterruptedException e) {
+            throw new AuthenticationUnavailableException("Cannot contact authentication server", e);
+        } catch (ExecutionException e2) {
+            Throwable cause = e2.getCause();
+            if (cause instanceof net.labymod.api.client.session.exceptions.AuthenticationUnavailableException) {
+                throw new AuthenticationUnavailableException(cause.getMessage(), cause.getCause());
+            }
+            if (cause instanceof net.labymod.api.client.session.exceptions.InvalidCredentialsException) {
+                throw new InvalidCredentialsException(cause.getMessage(), cause.getCause());
+            }
+            if (cause instanceof net.labymod.api.client.session.exceptions.AuthenticationException) {
+                throw new AuthenticationException(cause.getMessage(), cause.getCause());
+            }
+            throw new AuthenticationUnavailableException("Cannot contact authentication server", cause);
+        }
+    }
+}
