@@ -1,0 +1,123 @@
+package io.github.a5b84.darkloadingscreen.config;
+
+import static io.github.a5b84.darkloadingscreen.DarkLoadingScreen.config;
+import static io.github.a5b84.darkloadingscreen.config.Config.DEFAULT;
+
+import com.terraformersmc.modmenu.api.ConfigScreenFactory;
+import me.shedaniel.clothconfig2.api.ConfigBuilder;
+import me.shedaniel.clothconfig2.api.ConfigCategory;
+import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
+import me.shedaniel.clothconfig2.gui.entries.ColorEntry;
+import me.shedaniel.clothconfig2.gui.entries.FloatListEntry;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
+
+public class ConfigScreenFactoryImpl implements ConfigScreenFactory<Screen> {
+
+  @Override
+  public Screen create(Screen parent) {
+    ConfigBuilder builder =
+        ConfigBuilder.create()
+            .setParentScreen(parent)
+            .setTitle(Component.translatable("darkLoadingScreen.config.title"));
+
+    // Keep the old config in case the user wants to close without saving
+    Config oldConfig = config;
+
+    // Fields
+    ConfigCategory category = builder.getOrCreateCategory(Component.empty());
+    ConfigEntries entries = new ConfigEntries(builder.entryBuilder(), category);
+    category.addEntry(
+        new ButtonEntry(
+            fieldName("preview"),
+            button -> {
+              // Preview button
+              config = entries.createConfig();
+              Minecraft.getInstance()
+                  .setOverlay(new PreviewSplashOverlay(500, () -> config = oldConfig));
+            }));
+
+    // Saving
+    builder.setSavingRunnable(
+        () -> {
+          config = entries.createConfig();
+          config.write();
+        });
+
+    // Done
+    return builder.build();
+  }
+
+  /**
+   * @return a {@link Component} that indentifies a field
+   */
+  private static Component fieldName(String id) {
+    return Component.translatable("darkLoadingScreen.config.entry." + id);
+  }
+
+  /** Class that holds/handles all the fields */
+  private static class ConfigEntries {
+
+    private final ConfigEntryBuilder builder;
+    private final ConfigCategory category;
+    private final ColorEntry backgroundColorField;
+    private final ColorEntry barColorField;
+    private final ColorEntry barBackgroundColorField;
+    private final ColorEntry barBorderColorField;
+    private final ColorEntry logoColorField;
+    private final FloatListEntry fadeInDurationField;
+    private final FloatListEntry fadeOutDurationField;
+
+    /** Creates all the fields and adds them to {@code category} */
+    public ConfigEntries(ConfigEntryBuilder builder, ConfigCategory category) {
+      this.builder = builder;
+      this.category = category;
+
+      backgroundColorField =
+          createColorField("background", config.backgroundColor, DEFAULT.backgroundColor);
+      barColorField = createColorField("bar", config.barColor, DEFAULT.barColor);
+      barBackgroundColorField =
+          createColorField("barBackground", config.barBackgroundColor, DEFAULT.barBackgroundColor);
+      barBorderColorField =
+          createColorField("border", config.barBorderColor, DEFAULT.barBorderColor);
+      logoColorField = createColorField("logo", config.logoColor, DEFAULT.logoColor);
+      fadeInDurationField =
+          createFadeTimeField("fadeIn", config.fadeInDuration, DEFAULT.fadeInDuration);
+      fadeOutDurationField =
+          createFadeTimeField("fadeOut", config.fadeOutDuration, DEFAULT.fadeOutDuration);
+    }
+
+    public Config createConfig() {
+      return new Config(
+          backgroundColorField.getValue(),
+          barColorField.getValue(),
+          barBackgroundColorField.getValue(),
+          barBorderColorField.getValue(),
+          logoColorField.getValue(),
+          fadeInDurationField.getValue(),
+          fadeOutDurationField.getValue());
+    }
+
+    // Methods that create entries
+
+    private ColorEntry createColorField(String id, int value, int defaultValue) {
+      ColorEntry entry =
+          builder.startColorField(fieldName(id), value).setDefaultValue(defaultValue).build();
+      category.addEntry(entry);
+      return entry;
+    }
+
+    private FloatListEntry createFadeTimeField(String id, float value, float defaultValue) {
+      FloatListEntry entry =
+          builder
+              .startFloatField(fieldName(id), value)
+              .setDefaultValue(defaultValue)
+              .setMin(0)
+              .setMax(Config.MAX_FADE_DURATION)
+              .build();
+      category.addEntry(entry);
+      return entry;
+    }
+  }
+}

@@ -24,10 +24,15 @@ public class ScreenMixin {
 		if (TitleOpeningController.shouldRenderDynamicScreenBackground()
 				&& TitleOpeningController.usesDynamicBackground((Screen) (Object) this)) {
 			if (!((Object) this instanceof net.minecraft.client.gui.screens.TitleScreen)) {
-				TitleOpeningController.renderDynamicScreenEffects(graphics);
 				graphics.blurBeforeThisStratum();
 			}
 			ci.cancel();
 		}
+	}
+
+	@Inject(method = "extractRenderState", at = @At("TAIL"))
+	private void animatedMojang$renderDynamicCaveEffects(GuiGraphicsExtractor graphics, int mouseX, int mouseY,
+			float delta, CallbackInfo ci) {
+		TitleOpeningController.renderDynamicScreenEffects(graphics);
 	}
 }

@@ -2,6 +2,7 @@ package animated_mojang.client.mixin;
 
 import animated_mojang.client.internal.MojangAnimation;
 import animated_mojang.client.internal.TitleOpeningController;
+import animated_mojang.config.AnimatedMojangConfig;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.LoadingOverlay;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -31,6 +32,9 @@ public class LoadingOverlayMixin {
 
 	@Inject(method = "extractRenderState", at = @At("HEAD"), cancellable = true)
 	private void animatedMojang$render(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+		if (!AnimatedMojangConfig.isMojangLogoAnimationEnabled()) {
+			return;
+		}
 		ci.cancel();
 		LoadingOverlayAccessor overlay = (LoadingOverlayAccessor) this;
 		long now = Util.getMillis();
@@ -68,8 +72,20 @@ public class LoadingOverlayMixin {
 		}
 	}
 
+	@Inject(method = "extractRenderState", at = @At("TAIL"))
+	private void animatedMojang$startTitleAfterVanillaLoading(GuiGraphicsExtractor graphics, int mouseX, int mouseY,
+			float delta, CallbackInfo ci) {
+		if (!AnimatedMojangConfig.isMojangLogoAnimationEnabled()
+				&& ((LoadingOverlayAccessor) this).animatedMojang$getMinecraft().getOverlay() == null) {
+			TitleOpeningController.playOpening();
+		}
+	}
+
 	@Inject(method = "tick", at = @At("HEAD"), cancellable = true)
 	private void animatedMojang$tick(CallbackInfo ci) {
+		if (!AnimatedMojangConfig.isMojangLogoAnimationEnabled()) {
+			return;
+		}
 		ci.cancel();
 	}
 

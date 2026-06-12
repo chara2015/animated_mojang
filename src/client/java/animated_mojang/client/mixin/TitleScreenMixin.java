@@ -1,6 +1,7 @@
 package animated_mojang.client.mixin;
 
 import animated_mojang.client.internal.TitleOpeningController;
+import animated_mojang.config.AnimatedMojangConfig;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.LogoRenderer;
@@ -39,9 +40,10 @@ public class TitleScreenMixin {
 			target = "Lnet/minecraft/client/gui/components/LogoRenderer;extractRenderState(Lnet/minecraft/client/gui/GuiGraphicsExtractor;IF)V"))
 	private void animatedMojang$renderAnimatedMinecraftTitle(LogoRenderer logoRenderer, GuiGraphicsExtractor graphics,
 			int screenWidth, float alpha) {
-		if (TitleOpeningController.shouldRenderOpeningBackground()) {
+		if (TitleOpeningController.shouldRenderOpeningBackground()
+				&& AnimatedMojangConfig.isMinecraftTitleAnimationEnabled()) {
 			TitleOpeningController.renderAnimatedMinecraftTitle(graphics, 1.0F);
-			TitleOpeningController.renderMinecraftEditionWithMenu(graphics, 1.0F);
+			TitleOpeningController.renderMinecraftEditionWithMenu(graphics, alpha);
 		} else {
 			logoRenderer.extractRenderState(graphics, screenWidth, alpha);
 		}

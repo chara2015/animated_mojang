@@ -287,7 +287,8 @@ final class SchematicScene {
 
 	private void tickParticles(CameraPose pose, int currentTick) {
 		if (lastParticleTick == Integer.MIN_VALUE) {
-			lastParticleTick = currentTick;
+			seedVisibleTorchParticles(pose);
+			lastParticleTick = currentTick - 1;
 		}
 		int ticks = Mth.clamp(currentTick - lastParticleTick, 0, 4);
 		for (int i = 0; i < ticks; i++) {
@@ -303,7 +304,19 @@ final class SchematicScene {
 		lastParticleTick = currentTick;
 	}
 
+	private void seedVisibleTorchParticles(CameraPose pose) {
+		for (TorchSample torch : torchSamples) {
+			double dx = torch.x + 0.5D - pose.x;
+			double dy = torch.y + 0.7D - pose.y;
+			double dz = torch.z + 0.5D - pose.z;
+			if (dx * dx + dy * dy + dz * dz <= 72.0D * 72.0D) {
+				spawnTorchParticles(torch.x, torch.y, torch.z, torch.facing);
+			}
+		}
+	}
+
 	private void randomDisplayTick(CameraPose pose) {
+		spawnParsedTorchParticles(pose);
 		int cameraX = Mth.floor(pose.x);
 		int cameraY = Mth.floor(pose.y);
 		int cameraZ = Mth.floor(pose.z);
@@ -321,6 +334,17 @@ final class SchematicScene {
 		}
 		if (particles.size() > 768) {
 			particles.subList(0, particles.size() - 768).clear();
+		}
+	}
+
+	private void spawnParsedTorchParticles(CameraPose pose) {
+		for (TorchSample torch : torchSamples) {
+			double dx = torch.x + 0.5D - pose.x;
+			double dy = torch.y + 0.7D - pose.y;
+			double dz = torch.z + 0.5D - pose.z;
+			if (dx * dx + dy * dy + dz * dz <= 72.0D * 72.0D && particleRandom.nextInt(8) == 0) {
+				spawnTorchParticles(torch.x, torch.y, torch.z, torch.facing);
+			}
 		}
 	}
 
@@ -916,15 +940,16 @@ final class SchematicScene {
 	private static SceneBlocks decodeBlocks(int width, int height, int length, String[] states, byte[] data,
 			byte[] light, byte[] redLight, byte[] greenLight, byte[] blueLight) {
 		int volume = Math.max(0, width * height * length);
+		int[] paletteIds = decodeVarInts(data, volume);
 		String[] blockStates = new String[volume];
 		float[] blockLights = new float[volume];
 		float[] blockRedLights = new float[volume];
 		float[] blockGreenLights = new float[volume];
 		float[] blockBlueLights = new float[volume];
-		for (int index = 0; index < volume && index < data.length; index++) {
-			int stateId = data[index] & 0xFF;
+		for (int index = 0; index < volume && index < paletteIds.length; index++) {
+			int stateId = paletteIds[index];
 			String state = stateId >= 0 && stateId < states.length ? states[stateId] : null;
-			if (state != null && isSupportedMaterial(state)) {
+			if (!VersionScenePolicy.isInvisible(state) && isSupportedMaterial(state)) {
 				blockStates[index] = state;
 				float base = lightChannelAt(index, light);
 				float red = lightChannelAt(index, redLight);
@@ -982,6 +1007,33 @@ final class SchematicScene {
 		List<TorchSample> torchSamples = collectTorchSamples(width, height, length, blockStates);
 		return new SceneBlocks(blockStates, blockLights, blockRedLights, blockGreenLights, blockBlueLights,
 				wallBlocks, detailBlocks, meshFaces, lightPoints, torchSamples);
+	}
+
+	private static int[] decodeVarInts(byte[] data, int expected) {
+		int[] result = new int[expected];
+		int output = 0;
+		int value = 0;
+		int shift = 0;
+		for (byte current : data) {
+			value |= (current & 0x7F) << shift;
+			if ((current & 0x80) == 0) {
+				if (output >= expected) {
+					break;
+				}
+				result[output++] = value;
+				value = 0;
+				shift = 0;
+			} else {
+				shift += 7;
+				if (shift > 28) {
+					throw new IllegalArgumentException("Invalid schematic BlockData VarInt");
+				}
+			}
+		}
+		if (output != expected || shift != 0) {
+			throw new IllegalArgumentException("Schematic BlockData size does not match its dimensions");
+		}
+		return result;
 	}
 
 	private static float[][] propagateColoredLegacyLight(int width, int height, int length, String[] states) {

@@ -1,5 +1,9 @@
 package animated_mojang.client.internal;
 
+import animated_mojang.common.CameraProfiles;
+import animated_mojang.common.DynamicBackgroundScreens;
+import animated_mojang.common.OpeningTimeline;
+import animated_mojang.config.AnimatedMojangConfig;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.ConnectScreen;
@@ -18,14 +22,12 @@ import net.minecraft.client.gui.screens.options.OptionsSubScreen;
 import net.minecraft.client.gui.screens.packs.PackSelectionScreen;
 import net.minecraft.client.gui.screens.worldselection.CreateWorldScreen;
 import net.minecraft.client.gui.screens.worldselection.SelectWorldScreen;
-import net.minecraft.client.resources.sounds.SimpleSoundInstance;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.util.Util;
 
 public final class TitleOpeningController {
-	private static final long OPENING_MS = 4000L;
-	private static final long MENU_REVEAL_MS = 2700L;
+	private static final long OPENING_MS = OpeningTimeline.DURATION_MILLIS;
+	private static final long MENU_REVEAL_MS = OpeningTimeline.MENU_REVEAL_MILLIS;
 	private static final float CURVE_X1 = 0.2F;
 	private static final float CURVE_Y1 = 0.32F;
 	private static final float CURVE_X2 = 0.2F;
@@ -41,14 +43,14 @@ public final class TitleOpeningController {
 
 	private static boolean openingPlayed;
 	private static long openingStartedAt = -1L;
-	private static boolean menuMusicStarted;
-	private static final float[] TITLE_CAMERA = { 31.0F, 13.0F, 6.0F, 21.0F, -13.0F, 0.0F };
-	private static final float[] SINGLEPLAYER_CAMERA = { 23.0F, 17.0F, 15.0F, -31.0F, 7.0F, 5.0F };
-	private static final float[] MULTIPLAYER_CAMERA = { 23.0F, 13.0F, 15.0F, -31.0F, -13.0F, 5.0F };
-	private static final float[] OPTIONS_CAMERA = { 23.0F, 13.0F, 15.0F, -15.0F, -13.0F, -5.0F };
-	private static final float[] DIRECT_CONNECT_CAMERA = { 23.0F, 13.0F, 18.0F, -21.0F, -13.0F, 8.0F };
-	private static final float[] OPENER_START_CAMERA = { 17.0F, 13.0F, 82.0F, 0.0F, 0.0F, -90.0F };
-	private static final float[] OPENER_TRANSFER_CAMERA = { 20.0F, 12.8F, 44.0F, 8.0F, -5.0F, -10.0F };
+	private static final float[] TITLE_CAMERA = CameraProfiles.TITLE.toArray();
+	private static final float[] SINGLEPLAYER_CAMERA = CameraProfiles.SINGLEPLAYER.toArray();
+	private static final float[] MULTIPLAYER_CAMERA = CameraProfiles.MULTIPLAYER.toArray();
+	private static final float[] OPTIONS_CAMERA = CameraProfiles.OPTIONS.toArray();
+	private static final float[] DIRECT_CONNECT_CAMERA = CameraProfiles.DIRECT_CONNECT.toArray();
+	private static final float[] CONNECT_CAMERA = CameraProfiles.CONNECT.toArray();
+	private static final float[] OPENER_START_CAMERA = CameraProfiles.OPENER_START.toArray();
+	private static final float[] OPENER_TRANSFER_CAMERA = CameraProfiles.OPENER_TRANSFER.toArray();
 	private static final long SCREEN_TRANSITION_MS = 500L;
 	private static final float[] currentCamera = TITLE_CAMERA.clone();
 	private static final float[] transitionStartCamera = TITLE_CAMERA.clone();
@@ -62,10 +64,12 @@ public final class TitleOpeningController {
 	}
 
 	public static void playOpening() {
+		if (openingPlayed) {
+			return;
+		}
 		AnimatedMinecraftTitle.preload();
 		openingPlayed = true;
 		openingStartedAt = Util.getMillis();
-		startMenuMusic();
 	}
 
 	public static boolean shouldBlockEarlyInput() {
@@ -73,7 +77,8 @@ public final class TitleOpeningController {
 	}
 
 	public static boolean shouldHideTitleWidgets() {
-		return isOpeningPlaying() && (getOpeningElapsedMillis() < MENU_REVEAL_MS || getTransitionProgress() < 1.0F);
+		return AnimatedMojangConfig.isMinecraftTitleAnimationEnabled() && isOpeningPlaying()
+				&& (getOpeningElapsedMillis() < MENU_REVEAL_MS || getTransitionProgress() < 1.0F);
 	}
 
 	public static boolean shouldRenderOpeningBackground() {
@@ -88,7 +93,8 @@ public final class TitleOpeningController {
 		return screen instanceof TitleScreen || screen instanceof SelectWorldScreen || screen instanceof CreateWorldScreen
 				|| screen instanceof JoinMultiplayerScreen || screen instanceof ManageServerScreen
 				|| screen instanceof DirectJoinServerScreen || screen instanceof ConnectScreen
-				|| screen instanceof DisconnectedScreen || isTransitionScreen(screen) || isOptionsScreen(screen);
+				|| screen instanceof DisconnectedScreen || isTransitionScreen(screen) || isOptionsScreen(screen)
+				|| DynamicBackgroundScreens.matches(screen);
 	}
 
 	public static long getOpeningElapsedMillis() {
@@ -96,13 +102,13 @@ public final class TitleOpeningController {
 	}
 
 	public static void renderAnimatedMinecraftTitle(GuiGraphicsExtractor graphics, float alpha) {
-		if (openingPlayed) {
+		if (openingPlayed && AnimatedMojangConfig.isMinecraftTitleAnimationEnabled()) {
 			AnimatedMinecraftTitle.render(graphics, alpha);
 		}
 	}
 
 	public static void renderMinecraftEditionWithMenu(GuiGraphicsExtractor graphics, float alpha) {
-		if (openingPlayed && !shouldHideTitleWidgets()) {
+		if (openingPlayed && AnimatedMojangConfig.isMinecraftTitleAnimationEnabled() && !shouldHideTitleWidgets()) {
 			AnimatedMinecraftTitle.renderEdition(graphics, alpha);
 		}
 	}
@@ -189,7 +195,8 @@ public final class TitleOpeningController {
 		if (screen instanceof SelectWorldScreen || screen instanceof CreateWorldScreen) return SINGLEPLAYER_CAMERA;
 		if (screen instanceof JoinMultiplayerScreen) return MULTIPLAYER_CAMERA;
 		if (screen instanceof ManageServerScreen || screen instanceof DirectJoinServerScreen) return DIRECT_CONNECT_CAMERA;
-		if (screen instanceof ConnectScreen || screen instanceof DisconnectedScreen) return OPENER_START_CAMERA;
+		if (screen instanceof ConnectScreen) return CONNECT_CAMERA;
+		if (screen instanceof DisconnectedScreen) return DIRECT_CONNECT_CAMERA;
 		if (isOptionsScreen(screen)) return OPTIONS_CAMERA;
 		if (screen instanceof TitleScreen) return TITLE_CAMERA;
 		return transitionTargetCamera;
@@ -255,17 +262,6 @@ public final class TitleOpeningController {
 		float openingTime = openingPlayed ? Math.max(0L, Util.getMillis() - openingStartedAt) / 1000.0F : 4.0F;
 		SchematicScene.get().renderTorchEffects(graphics, camera, time, openingTime);
 		drawParticles(graphics, width, height, camera, time);
-	}
-
-	private static void startMenuMusic() {
-		if (menuMusicStarted) {
-			return;
-		}
-		menuMusicStarted = true;
-		try {
-			Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forMusic(SoundEvents.MUSIC_MENU.value()));
-		} catch (RuntimeException ignored) {
-		}
 	}
 
 	private static void drawHeroCave(GuiGraphicsExtractor graphics, int width, int height, float camera, float time) {

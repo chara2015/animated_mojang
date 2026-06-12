@@ -15,7 +15,6 @@ public class TransitionScreenMixin {
 	private void animatedMojang$keepDynamicCaveDuringTransition(GuiGraphicsExtractor graphics, int mouseX, int mouseY,
 			float delta, CallbackInfo ci) {
 		if (TitleOpeningController.shouldRenderDynamicScreenBackground()) {
-			TitleOpeningController.renderDynamicScreenEffects(graphics);
 			graphics.blurBeforeThisStratum();
 			ci.cancel();
 		}
