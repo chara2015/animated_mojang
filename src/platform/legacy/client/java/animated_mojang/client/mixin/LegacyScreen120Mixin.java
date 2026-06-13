@@ -2,6 +2,7 @@ package animated_mojang.client.mixin;
 
 import animated_mojang.client.legacy.LegacyAnimations;
 import animated_mojang.common.DynamicBackgroundScreens;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,7 +16,7 @@ public abstract class LegacyScreen120Mixin {
 			at = @At("HEAD"), cancellable = true, require = 0)
 	private void animatedMojang$renderLegacy120DynamicBackground(GuiGraphics graphics, CallbackInfo ci) {
 		String name = getClass().getSimpleName();
-		if (DynamicBackgroundScreens.matches(this)) {
+		if (Minecraft.getInstance().level == null && DynamicBackgroundScreens.matches(this)) {
 			LegacyAnimations.renderScreenBackground(graphics, name);
 			ci.cancel();
 		}

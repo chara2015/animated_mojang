@@ -28,7 +28,7 @@ public class TitleScreenMixin {
 			float delta, CallbackInfo ci) {
 		if (TitleOpeningController.shouldHideTitleWidgets()) {
 			TitleOpeningController.renderBackground(graphics);
-			TitleOpeningController.renderAnimatedMinecraftTitle(graphics, 1.0F);
+			TitleOpeningController.renderAnimatedMinecraftTitle(graphics, 0.0F);
 			TitleOpeningController.renderFadeCover(graphics);
 			ci.cancel();
 		} else if (TitleOpeningController.shouldRenderOpeningBackground()) {
@@ -42,7 +42,7 @@ public class TitleScreenMixin {
 			int screenWidth, float alpha) {
 		if (TitleOpeningController.shouldRenderOpeningBackground()
 				&& AnimatedMojangConfig.isMinecraftTitleAnimationEnabled()) {
-			TitleOpeningController.renderAnimatedMinecraftTitle(graphics, 1.0F);
+			TitleOpeningController.renderAnimatedMinecraftTitle(graphics, alpha);
 			TitleOpeningController.renderMinecraftEditionWithMenu(graphics, alpha);
 		} else {
 			logoRenderer.extractRenderState(graphics, screenWidth, alpha);

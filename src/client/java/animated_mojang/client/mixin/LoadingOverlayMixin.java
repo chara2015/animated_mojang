@@ -32,11 +32,11 @@ public class LoadingOverlayMixin {
 
 	@Inject(method = "extractRenderState", at = @At("HEAD"), cancellable = true)
 	private void animatedMojang$render(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-		if (!AnimatedMojangConfig.isMojangLogoAnimationEnabled()) {
+		LoadingOverlayAccessor overlay = (LoadingOverlayAccessor) this;
+		if (!AnimatedMojangConfig.isMojangLogoAnimationEnabled() || overlay.animatedMojang$getFadeIn()) {
 			return;
 		}
 		ci.cancel();
-		LoadingOverlayAccessor overlay = (LoadingOverlayAccessor) this;
 		long now = Util.getMillis();
 
 		tickFadeIn(overlay, now);
@@ -75,15 +75,17 @@ public class LoadingOverlayMixin {
 	@Inject(method = "extractRenderState", at = @At("TAIL"))
 	private void animatedMojang$startTitleAfterVanillaLoading(GuiGraphicsExtractor graphics, int mouseX, int mouseY,
 			float delta, CallbackInfo ci) {
-		if (!AnimatedMojangConfig.isMojangLogoAnimationEnabled()
-				&& ((LoadingOverlayAccessor) this).animatedMojang$getMinecraft().getOverlay() == null) {
+		LoadingOverlayAccessor overlay = (LoadingOverlayAccessor) this;
+		if (!overlay.animatedMojang$getFadeIn() && !AnimatedMojangConfig.isMojangLogoAnimationEnabled()
+				&& overlay.animatedMojang$getMinecraft().getOverlay() == null) {
 			TitleOpeningController.playOpening();
 		}
 	}
 
 	@Inject(method = "tick", at = @At("HEAD"), cancellable = true)
 	private void animatedMojang$tick(CallbackInfo ci) {
-		if (!AnimatedMojangConfig.isMojangLogoAnimationEnabled()) {
+		if (!AnimatedMojangConfig.isMojangLogoAnimationEnabled()
+				|| ((LoadingOverlayAccessor) this).animatedMojang$getFadeIn()) {
 			return;
 		}
 		ci.cancel();

@@ -3,6 +3,7 @@ package animated_mojang.client.legacy;
 import animated_mojang.ModMetadata;
 import animated_mojang.common.AnimationMath;
 import animated_mojang.common.OpeningTimeline;
+import animated_mojang.config.AnimatedMojangConfig;
 import net.minecraft.client.gui.GuiGraphics;
 
 public final class LegacyAnimations {
@@ -128,7 +129,7 @@ public final class LegacyAnimations {
 	}
 
 	public static boolean shouldSuppressMenuMusic() {
-		return loadingStartedAt != -1L && !isLoadingAnimationFinished();
+		return AnimatedMojangConfig.isMinecraftTitleAnimationEnabled() && titleStartedAt == -1L;
 	}
 
 	public static void renderLoading(GuiGraphics graphics) {
@@ -216,8 +217,12 @@ public final class LegacyAnimations {
 	}
 
 	public static void renderTitle(GuiGraphics graphics) {
+		renderTitle(graphics, OpeningTimeline.menuFade(titleElapsed()));
+	}
+
+	public static void renderTitle(GuiGraphics graphics, float alpha) {
 		long elapsed = titleElapsed() - TITLE_DELAY_MILLIS;
-		if (elapsed < 0L) {
+		if (elapsed < 0L || alpha <= 0.0F) {
 			return;
 		}
 		int frame = AnimationMath.clamp((int) (elapsed / TITLE_FRAME_TIME_MILLIS), 0, TITLE_FRAME_COUNT - 1);
@@ -231,21 +236,23 @@ public final class LegacyAnimations {
 				- TITLE_CONTENT_X * sourceScale);
 		int y = Math.round(VANILLA_TITLE_TOP - TITLE_CONTENT_Y * sourceScale);
 
+		int color = AnimationMath.clamp(Math.round(alpha * 255.0F), 0, 255) << 24 | 0xFFFFFF;
 		LegacyRenderBridge.blit(graphics, TITLE_TEXTURES[textureIndex], x, y, 0.0F,
 				row * (float) TITLE_SOURCE_FRAME_HEIGHT, width, height, TITLE_SOURCE_WIDTH,
-				TITLE_SOURCE_FRAME_HEIGHT, TITLE_SOURCE_WIDTH, TITLE_SOURCE_TEXTURE_HEIGHT, 0xFFFFFFFF);
+				TITLE_SOURCE_FRAME_HEIGHT, TITLE_SOURCE_WIDTH, TITLE_SOURCE_TEXTURE_HEIGHT, color);
 		if (OpeningTimeline.shouldRevealMenu(titleElapsed())) {
-			renderEdition(graphics, logoScale);
+			renderEdition(graphics, logoScale, alpha);
 		}
 	}
 
-	private static void renderEdition(GuiGraphics graphics, float logoScale) {
+	private static void renderEdition(GuiGraphics graphics, float logoScale, float alpha) {
 		int width = Math.max(1, Math.round(VANILLA_EDITION_WIDTH * logoScale));
 		int height = Math.max(1, Math.round(VANILLA_EDITION_HEIGHT * logoScale));
 		int x = (graphics.guiWidth() - width) / 2;
 		int y = Math.round(VANILLA_TITLE_TOP + (VANILLA_TITLE_HEIGHT - VANILLA_EDITION_OVERLAP) * logoScale);
 		LegacyRenderBridge.blit(graphics, MINECRAFT_EDITION, x, y, 0.0F, 0.0F, width, height,
-				VANILLA_EDITION_WIDTH, VANILLA_EDITION_HEIGHT, VANILLA_EDITION_WIDTH, 16, 0xFFFFFFFF);
+				VANILLA_EDITION_WIDTH, VANILLA_EDITION_HEIGHT, VANILLA_EDITION_WIDTH, 16,
+				AnimationMath.clamp(Math.round(alpha * 255.0F), 0, 255) << 24 | 0xFFFFFF);
 	}
 
 	private static long titleElapsed() {

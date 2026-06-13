@@ -7,7 +7,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.ConnectScreen;
 import net.minecraft.client.gui.screens.DirectJoinServerScreen;
 import net.minecraft.client.gui.screens.DisconnectedScreen;
+import net.minecraft.client.gui.screens.GenericMessageScreen;
+import net.minecraft.client.gui.screens.GenericWaitingScreen;
+import net.minecraft.client.gui.screens.LevelLoadingScreen;
 import net.minecraft.client.gui.screens.ManageServerScreen;
+import net.minecraft.client.gui.screens.ProgressScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
@@ -25,7 +29,6 @@ public final class VersionedTitleBackgroundController {
 	private static final float[] MULTIPLAYER_CAMERA = CameraProfiles.MULTIPLAYER.toArray();
 	private static final float[] OPTIONS_CAMERA = CameraProfiles.OPTIONS.toArray();
 	private static final float[] DIRECT_CONNECT_CAMERA = CameraProfiles.DIRECT_CONNECT.toArray();
-	private static final float[] CONNECT_CAMERA = CameraProfiles.CONNECT.toArray();
 	private static final float[] OPENER_START_CAMERA = CameraProfiles.OPENER_START.toArray();
 	private static final float[] OPENER_TRANSFER_CAMERA = CameraProfiles.OPENER_TRANSFER.toArray();
 	private static final float[] currentCamera = TITLE_CAMERA.clone();
@@ -38,6 +41,7 @@ public final class VersionedTitleBackgroundController {
 	private static long screenTransitionDuration = SCREEN_TRANSITION_MS;
 	private static long forcedTransitionDuration;
 	private static Class<?> lastScreenClass = TitleScreen.class;
+	private static boolean connectionFlowActive;
 
 	private VersionedTitleBackgroundController() {
 	}
@@ -81,11 +85,24 @@ public final class VersionedTitleBackgroundController {
 	}
 
 	public static boolean usesDynamicBackground(Screen screen) {
+		if (Minecraft.getInstance().level != null && !isTransitionScreen(screen)) {
+			connectionFlowActive = false;
+			return false;
+		}
+		updateConnectionFlow(screen);
+		if (connectionFlowActive) {
+			return true;
+		}
 		return screen instanceof TitleScreen || screen instanceof SelectWorldScreen || screen instanceof CreateWorldScreen
 				|| screen instanceof JoinMultiplayerScreen || screen instanceof ManageServerScreen
 				|| screen instanceof DirectJoinServerScreen || screen instanceof ConnectScreen
-				|| screen instanceof DisconnectedScreen || isOptionsScreen(screen)
+				|| screen instanceof DisconnectedScreen || isTransitionScreen(screen) || isOptionsScreen(screen)
 				|| DynamicBackgroundScreens.matches(screen);
+	}
+
+	private static boolean isTransitionScreen(Screen screen) {
+		return screen instanceof GenericMessageScreen || screen instanceof GenericWaitingScreen
+				|| screen instanceof LevelLoadingScreen || screen instanceof ProgressScreen;
 	}
 
 	private static void updateScreenCamera(long now, Screen screen) {
@@ -97,7 +114,12 @@ public final class VersionedTitleBackgroundController {
 			screenTransitionStartedAt = now;
 			long targetDuration = isLongScreenTransition(screen) ? 3000L : SCREEN_TRANSITION_MS;
 			screenTransitionDuration = Math.max(targetDuration, forcedTransitionDuration);
-			forcedTransitionDuration = targetDuration >= 1000L ? targetDuration : 0L;
+			if (forcedTransitionDuration > 0L) {
+				forcedTransitionDuration = 0L;
+			}
+			if (targetDuration >= 1000L) {
+				forcedTransitionDuration = targetDuration;
+			}
 			lastScreenClass = screen.getClass();
 		}
 		updateCameraInterpolation(now);
@@ -117,11 +139,12 @@ public final class VersionedTitleBackgroundController {
 	}
 
 	private static float[] cameraForScreen(Screen screen) {
-		if (screen instanceof SelectWorldScreen || screen instanceof CreateWorldScreen) return SINGLEPLAYER_CAMERA;
+		if (connectionFlowActive) return OPENER_START_CAMERA;
+		if (isSingleplayerFlowScreen(screen)) return SINGLEPLAYER_CAMERA;
 		if (screen instanceof JoinMultiplayerScreen) return MULTIPLAYER_CAMERA;
 		if (screen instanceof ManageServerScreen || screen instanceof DirectJoinServerScreen) return DIRECT_CONNECT_CAMERA;
-		if (screen instanceof ConnectScreen) return CONNECT_CAMERA;
-		if (screen instanceof DisconnectedScreen) return DIRECT_CONNECT_CAMERA;
+		if (screen instanceof ConnectScreen) return OPENER_START_CAMERA;
+		if (screen instanceof DisconnectedScreen) return OPENER_START_CAMERA;
 		if (isOptionsScreen(screen)) return OPTIONS_CAMERA;
 		if (screen instanceof TitleScreen) return TITLE_CAMERA;
 		return transitionTargetCamera;
@@ -131,8 +154,32 @@ public final class VersionedTitleBackgroundController {
 		return screen instanceof OptionsScreen || screen instanceof OptionsSubScreen || screen instanceof PackSelectionScreen;
 	}
 
+	private static boolean isSingleplayerFlowScreen(Screen screen) {
+		String name = screen.getClass().getSimpleName();
+		return screen instanceof SelectWorldScreen || screen instanceof CreateWorldScreen
+				|| name.contains("Create") || name.contains("GameRules")
+				|| name.contains("Experiments") || name.contains("DataPack");
+	}
+
 	private static boolean isLongScreenTransition(Screen screen) {
-		return screen instanceof ConnectScreen || screen instanceof DisconnectedScreen;
+		return connectionFlowActive || screen instanceof ConnectScreen || screen instanceof DisconnectedScreen;
+	}
+
+	private static void updateConnectionFlow(Screen screen) {
+		if (screen instanceof ConnectScreen) {
+			connectionFlowActive = true;
+			return;
+		}
+		if (connectionFlowActive && isExplicitConnectionExit(screen)) {
+			connectionFlowActive = false;
+		}
+	}
+
+	private static boolean isExplicitConnectionExit(Screen screen) {
+		return screen instanceof TitleScreen || screen instanceof JoinMultiplayerScreen
+				|| screen instanceof DirectJoinServerScreen || screen instanceof ManageServerScreen
+				|| screen instanceof SelectWorldScreen || screen instanceof CreateWorldScreen
+				|| isOptionsScreen(screen);
 	}
 
 	private static float[] openingCamera(float progress) {

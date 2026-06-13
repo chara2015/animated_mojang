@@ -77,15 +77,12 @@ public final class AnimatedMinecraftTitle {
 	}
 
 	public static void renderEdition(GuiGraphicsExtractor graphics, float alpha) {
-		float scale = bounceCurve((TitleOpeningController.getOpeningElapsedMillis() - 2700.0F) / 500.0F);
-		if (scale <= 0.0F) {
+		if (alpha <= 0.0F) {
 			return;
 		}
 		float logoScale = logoScale(graphics);
 		int width = Math.max(1, Math.round(VANILLA_EDITION_WIDTH * logoScale));
 		int height = Math.max(1, Math.round(VANILLA_EDITION_HEIGHT * logoScale));
-		width = Math.max(1, Math.round(width * scale));
-		height = Math.max(1, Math.round(height * scale));
 		int x = (graphics.guiWidth() - width) / 2;
 		int y = Math.round(VANILLA_WORD_TOP + (VANILLA_LOGO_HEIGHT - VANILLA_EDITION_OVERLAP) * logoScale);
 		int color = Mth.clamp(Math.round(alpha * 255.0F), 0, 255) << 24 | 0xFFFFFF;
@@ -97,21 +94,4 @@ public final class AnimatedMinecraftTitle {
 		return Math.min(1.0F, graphics.guiWidth() * 0.90F / VANILLA_LOGO_WIDTH);
 	}
 
-	private static float bounceCurve(float progress) {
-		float x = Mth.clamp(progress, 0.0F, 1.0F);
-		float lower = 0.0F;
-		float upper = 1.0F;
-		float t = x;
-		for (int i = 0; i < 12; i++) {
-			t = (lower + upper) * 0.5F;
-			if (bezier(t, 0.34F, 0.51F) < x) lower = t;
-			else upper = t;
-		}
-		return bezier(t, 1.36F, 1.16F);
-	}
-
-	private static float bezier(float t, float a, float b) {
-		float inverse = 1.0F - t;
-		return 3.0F * inverse * inverse * t * a + 3.0F * inverse * t * t * b + t * t * t;
-	}
 }

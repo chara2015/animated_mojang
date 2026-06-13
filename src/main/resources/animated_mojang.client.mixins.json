@@ -6,6 +6,7 @@
 		"LoadingOverlayAccessor",
 		"LoadingOverlayTextureMixin",
 		"LoadingOverlayMixin",
+		"MusicManagerMixin",
 		"GameRendererMixin",
 		"ScreenMixin",
 		"TitleScreenMixin"

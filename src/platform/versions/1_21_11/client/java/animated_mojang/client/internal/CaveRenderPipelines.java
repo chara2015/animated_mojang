@@ -3,6 +3,7 @@ package animated_mojang.client.internal;
 import animated_mojang.client.AnimatedMojangClient;
 import com.mojang.blaze3d.pipeline.BlendFunction;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
+import com.mojang.blaze3d.platform.DepthTestFunction;
 import com.mojang.blaze3d.shaders.UniformType;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
@@ -17,6 +18,8 @@ final class CaveRenderPipelines {
 			.withUniform("Projection", UniformType.UNIFORM_BUFFER)
 			.withUniform("Schematic", UniformType.UNIFORM_BUFFER)
 			.withVertexFormat(DefaultVertexFormat.POSITION_TEX_COLOR_NORMAL, VertexFormat.Mode.QUADS)
+			.withDepthTestFunction(DepthTestFunction.LEQUAL_DEPTH_TEST)
+			.withDepthWrite(true)
 			.buildSnippet();
 
 	static final RenderPipeline SOLID = RenderPipeline.builder(CAVE)
@@ -30,6 +33,7 @@ final class CaveRenderPipelines {
 			.withLocation(location("translucent"))
 			.withShaderDefine("ALPHA_CUTOUT", 0.01F)
 			.withBlend(BlendFunction.TRANSLUCENT)
+			.withDepthWrite(false)
 			.build();
 	static final RenderPipeline LINEAR_BLIT = RenderPipeline.builder()
 			.withLocation(location("linear_blit"))

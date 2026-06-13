@@ -11,6 +11,8 @@
 		${version_gui_accessor_mixin}
 		${version_game_renderer_mixin}
 		${version_screen_effects_mixin}
+		${version_selection_list_mixin}
+		${version_level_loading_screen_mixin}
 		"LegacyScreenMixin",
 		"LegacyTitleScreenMixin"
 	],

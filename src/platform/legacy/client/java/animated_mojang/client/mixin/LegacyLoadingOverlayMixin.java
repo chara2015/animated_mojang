@@ -19,11 +19,12 @@ public final class LegacyLoadingOverlayMixin {
 	@Inject(method = "render", at = @At("HEAD"), cancellable = true)
 	private void animatedMojang$startAfterReload(GuiGraphics graphics, int mouseX, int mouseY,
 			float delta, CallbackInfo ci) {
-		if (!AnimatedMojangConfig.isMojangLogoAnimationEnabled()) {
+		LegacyLoadingOverlayAccessor overlay = (LegacyLoadingOverlayAccessor) (Object) this;
+		if (!AnimatedMojangConfig.isMojangLogoAnimationEnabled() || overlay.animatedMojang$getFadeIn()) {
 			return;
 		}
 		if (!animatedMojang$animationStarted
-				&& ((LegacyLoadingOverlayAccessor) (Object) this).animatedMojang$getReload().isDone()) {
+				&& overlay.animatedMojang$getReload().isDone()) {
 			animatedMojang$animationStarted = true;
 			LegacyAnimations.beginLoading();
 			return;
@@ -42,7 +43,8 @@ public final class LegacyLoadingOverlayMixin {
 	@Inject(method = "render", at = @At("TAIL"))
 	private void animatedMojang$renderLegacyLoadingAnimation(GuiGraphics graphics, int mouseX, int mouseY,
 			float delta, CallbackInfo ci) {
-		if (AnimatedMojangConfig.isMojangLogoAnimationEnabled() && LegacyAnimations.hasLoadingAnimationStarted()
+		if (!((LegacyLoadingOverlayAccessor) (Object) this).animatedMojang$getFadeIn()
+				&& AnimatedMojangConfig.isMojangLogoAnimationEnabled() && LegacyAnimations.hasLoadingAnimationStarted()
 				&& !animatedMojang$animationStarted) {
 			LegacyAnimations.renderLoading(graphics);
 		}

@@ -3,6 +3,7 @@ package animated_mojang.common;
 public final class OpeningTimeline {
 	public static final long DURATION_MILLIS = 4000L;
 	public static final long MENU_REVEAL_MILLIS = 2700L;
+	public static final long MENU_FADE_MILLIS = 2000L;
 	private static final float CURVE_X1 = 0.2F;
 	private static final float CURVE_Y1 = 0.32F;
 	private static final float CURVE_X2 = 0.2F;
@@ -18,5 +19,10 @@ public final class OpeningTimeline {
 
 	public static boolean shouldRevealMenu(long elapsedMillis) {
 		return elapsedMillis >= MENU_REVEAL_MILLIS;
+	}
+
+	public static float menuFade(long elapsedMillis) {
+		return AnimationMath.clamp(
+				(elapsedMillis - MENU_REVEAL_MILLIS) / (float) MENU_FADE_MILLIS, 0.0F, 1.0F);
 	}
 }

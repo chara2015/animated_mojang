@@ -47,7 +47,7 @@ public final class LegacyTitleScreenMixin {
 	private void animatedMojang$replaceVanillaTitleLogo(LogoRenderer renderer, GuiGraphics graphics,
 			int screenWidth, float alpha) {
 		if (AnimatedMojangConfig.isMinecraftTitleAnimationEnabled()) {
-			LegacyAnimations.renderTitle(graphics);
+			LegacyAnimations.renderTitle(graphics, alpha);
 		} else {
 			renderer.renderLogo(graphics, screenWidth, alpha);
 		}

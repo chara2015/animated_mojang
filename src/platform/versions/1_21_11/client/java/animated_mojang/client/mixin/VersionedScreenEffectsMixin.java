@@ -11,16 +11,35 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Screen.class)
 public abstract class VersionedScreenEffectsMixin {
-	@Inject(method = "render", at = @At("TAIL"), require = 0)
-	private void animatedMojang$renderDynamicEffects(GuiGraphics graphics, int mouseX, int mouseY,
+	@Inject(method = "renderBackground(Lnet/minecraft/client/gui/GuiGraphics;IIF)V",
+			at = @At("HEAD"), cancellable = true, require = 0)
+	private void animatedMojang$replaceVersionedBackground(GuiGraphics graphics, int mouseX, int mouseY,
 			float delta, CallbackInfo ci) {
-		renderEffects(graphics);
+		if (usesDynamicBackground()) {
+			LegacyAnimations.renderScreenEffects(graphics);
+			ci.cancel();
+		}
 	}
 
-	private void renderEffects(GuiGraphics graphics) {
-		if (VersionedTitleBackgroundController.usesDynamicBackground((Screen) (Object) this)
-				&& !getClass().getSimpleName().contains("Title")) {
+	@Inject(method = "renderTransparentBackground(Lnet/minecraft/client/gui/GuiGraphics;)V",
+			at = @At("HEAD"), cancellable = true, require = 0)
+	private void animatedMojang$replaceVersionedTransparentBackground(GuiGraphics graphics, CallbackInfo ci) {
+		if (usesDynamicBackground()) {
 			LegacyAnimations.renderScreenEffects(graphics);
+			ci.cancel();
 		}
+	}
+
+	@Inject(method = "renderMenuBackground(Lnet/minecraft/client/gui/GuiGraphics;)V",
+			at = @At("HEAD"), cancellable = true, require = 0)
+	private void animatedMojang$keepVersionedDynamicBackground(GuiGraphics graphics, CallbackInfo ci) {
+		if (usesDynamicBackground()) {
+			LegacyAnimations.renderScreenEffects(graphics);
+			ci.cancel();
+		}
+	}
+
+	private boolean usesDynamicBackground() {
+		return VersionedTitleBackgroundController.usesDynamicBackground((Screen) (Object) this);
 	}
 }

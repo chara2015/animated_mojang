@@ -5,7 +5,8 @@ public final class DynamicBackgroundScreens {
 			"Title", "World", "Multiplayer", "Server", "Options", "Pack",
 			"Connect", "Disconnected", "Loading", "Progress", "Waiting",
 			"Message", "ReceivingLevel", "DownloadingTerrain", "Working",
-			"Warning", "Confirm", "Notice", "Safety", "Realms", "Mod", "Config"
+			"Warning", "Confirm", "Notice", "Safety", "Realms", "Mod", "Config",
+			"Create", "GameRules", "Experiments", "DataPack"
 	};
 
 	private DynamicBackgroundScreens() {

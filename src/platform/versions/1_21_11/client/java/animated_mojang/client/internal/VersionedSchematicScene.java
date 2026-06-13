@@ -470,7 +470,7 @@ public final class VersionedSchematicScene {
 				float minFaceV = min(face.vs);
 				float maxFaceV = max(face.vs);
 				for (int i = 0; i < 4; i++) {
-					int color = materialColor(face.state, face.redLights[i],
+					int color = materialColor(face.state, face.normalY, face.redLights[i],
 							face.greenLights[i], face.blueLights[i],
 							face.directionShade, 0.0F);
 					float u = face.us[i];
@@ -569,7 +569,7 @@ public final class VersionedSchematicScene {
 			}
 
 			float fog = Mth.clamp((depth * 0.25F) / 72.0F, 0.0F, 1.0F);
-			int color = materialColor(face.state, average(face.redLights), average(face.greenLights), average(face.blueLights),
+			int color = materialColor(face.state, face.normalY, average(face.redLights), average(face.greenLights), average(face.blueLights),
 					face.directionShade, fog);
 			float[] us = face.us;
 			float[] vs = face.vs;
@@ -1428,31 +1428,13 @@ public final class VersionedSchematicScene {
 						new float[] { x + min, x + max, x + max, x + min },
 						new float[] { y, y, y + 1.0F, y + 1.0F },
 						new float[] { z + min, z + max, z + max, z + min }, state), 0.02F, false);
-		addQuad(faces, new float[] { x + max, x + min, x + min, x + max },
-				new float[] { y, y, y + 1.0F, y + 1.0F },
-				new float[] { z + min, z + max, z + max, z + min },
-				new float[] { u0, u1, u1, u0 }, new float[] { v1, v1, v0, v0 },
-				0, 0, -1, state, light, vertexLights(states, blockLights, blockRedLights, blockGreenLights, blockBlueLights,
-						width, height, length, lightPoints,
-						new float[] { x + max, x + min, x + min, x + max },
-						new float[] { y, y, y + 1.0F, y + 1.0F },
-						new float[] { z + min, z + max, z + max, z + min }, state), 0.02F, false);
 		addQuad(faces, new float[] { x + min, x + max, x + max, x + min },
 				new float[] { y, y, y + 1.0F, y + 1.0F },
 				new float[] { z + max, z + min, z + min, z + max },
 				new float[] { u0, u1, u1, u0 }, new float[] { v1, v1, v0, v0 },
-				0, 0, 1, state, light, vertexLights(states, blockLights, blockRedLights, blockGreenLights, blockBlueLights,
-						width, height, length, lightPoints,
-						new float[] { x + min, x + max, x + max, x + min },
-						new float[] { y, y, y + 1.0F, y + 1.0F },
-						new float[] { z + max, z + min, z + min, z + max }, state), 0.02F, false);
-		addQuad(faces, new float[] { x + max, x + min, x + min, x + max },
-				new float[] { y, y, y + 1.0F, y + 1.0F },
-				new float[] { z + max, z + min, z + min, z + max },
-				new float[] { u0, u1, u1, u0 }, new float[] { v1, v1, v0, v0 },
 				0, 0, -1, state, light, vertexLights(states, blockLights, blockRedLights, blockGreenLights, blockBlueLights,
 						width, height, length, lightPoints,
-						new float[] { x + max, x + min, x + min, x + max },
+						new float[] { x + min, x + max, x + max, x + min },
 						new float[] { y, y, y + 1.0F, y + 1.0F },
 						new float[] { z + max, z + min, z + min, z + max }, state), 0.02F, false);
 	}
@@ -1582,7 +1564,7 @@ public final class VersionedSchematicScene {
 			return false;
 		}
 		return !(state.contains("lava") || state.contains("slab") || state.contains("fence")
-				|| state.contains("rail") || state.contains("torch") || state.contains("grass")
+				|| state.contains("rail") || state.contains("torch") || isPlantGrass(state)
 				|| state.contains("poppy") || state.contains("dandelion") || state.contains("cobweb")
 				|| state.contains("lever") || state.contains("snow["));
 	}
@@ -1600,13 +1582,17 @@ public final class VersionedSchematicScene {
 	}
 
 	private static boolean isCrossPlane(String state) {
-		return state != null && (state.contains("minecraft:grass") || state.contains("poppy")
+		return state != null && (isPlantGrass(state) || state.contains("poppy")
 				|| state.contains("dandelion") || state.contains("cobweb"));
 	}
 
 	private static boolean isCutoutMaterial(String state) {
 		return state != null && (state.contains("rail") || state.contains("cobweb") || state.contains("poppy")
-				|| state.contains("dandelion") || state.contains("minecraft:grass"));
+				|| state.contains("dandelion") || isPlantGrass(state));
+	}
+
+	private static boolean isPlantGrass(String state) {
+		return state != null && (state.equals("minecraft:grass") || state.startsWith("minecraft:grass["));
 	}
 
 	private static String slabType(String state) {
@@ -1798,6 +1784,18 @@ public final class VersionedSchematicScene {
 			return new float[] { cutX / ATLAS_SIZE, cutY / ATLAS_SIZE, (cutX + cutW) / ATLAS_SIZE,
 					(cutY + cutH) / ATLAS_SIZE };
 		}
+		if (isSlab(state) && !"double".equals(slabType(state))) {
+			maxV = minV + (maxV - minV) * 0.5F;
+		}
+		if (isFence(state)) {
+			float pixel = TILE_SIZE / (float) ATLAS_SIZE;
+			minU += pixel * 6.0F;
+			maxU -= pixel * 6.0F;
+			if (normalY != 0) {
+				minV += pixel * 6.0F;
+				maxV -= pixel * 6.0F;
+			}
+		}
 		return new float[] { minU, minV, maxU, maxV };
 	}
 
@@ -1961,6 +1959,9 @@ public final class VersionedSchematicScene {
 					|| state.contains("shape=south_east") || state.contains("shape=south_west")
 					? tile(0, 7) : tile(0, 8);
 		}
+		if (isPlantGrass(state)) {
+			return tile(8, 5);
+		}
 		if (state.contains("grass_block")) {
 			return state.contains("snowy=true") ? tile(4, 4) : tile(3, 0);
 		}
@@ -2013,6 +2014,40 @@ public final class VersionedSchematicScene {
 	}
 
 	private static MaterialTile tileForFace(String state, int normalX, int normalY, int normalZ) {
+		if (state.contains("grass_block")) {
+			if (normalY > 0) {
+				return tile(0, 0);
+			}
+			if (normalY < 0) {
+				return tile(2, 0);
+			}
+			return state.contains("snowy=true") ? tile(4, 4) : tile(3, 0);
+		}
+		if (state.contains("crafting_table")) {
+			if (normalY > 0) {
+				return tile(11, 2);
+			}
+			if (normalY < 0) {
+				return tile(4, 0);
+			}
+			return tile(11, 3);
+		}
+		if (state.contains("pumpkin")) {
+			if (normalY != 0) {
+				return tile(6, 6);
+			}
+			String facing = parameter(state, "facing", "north");
+			boolean front = switch (facing) {
+				case "east" -> normalX > 0;
+				case "west" -> normalX < 0;
+				case "south" -> normalZ > 0;
+				default -> normalZ < 0;
+			};
+			if (front && state.contains("carved_pumpkin")) {
+				return state.contains("lit=true") ? tile(8, 7) : tile(7, 7);
+			}
+			return tile(6, 7);
+		}
 		if (!state.contains("furnace")) {
 			return tileFor(state);
 		}
@@ -2039,10 +2074,10 @@ public final class VersionedSchematicScene {
 		return new MaterialTile(x * TILE_SIZE, y * TILE_SIZE);
 	}
 
-	private static int materialColor(String state, float redLight, float greenLight, float blueLight,
+	private static int materialColor(String state, int normalY, float redLight, float greenLight, float blueLight,
 			float directionShade, float fog) {
 		int color = 0xFFFFFF;
-		if (state.contains("grass_block")) {
+		if (isPlantGrass(state) || state.contains("grass_block") && normalY > 0) {
 			color = state.contains("snowy=true") ? 0xD8DFE4 : 0x667B3A;
 		}
 		float redShade = localLight(redLight, 1.0F);

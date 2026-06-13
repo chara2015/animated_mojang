@@ -125,6 +125,7 @@ tasks.withType<ProcessResources>().configureEach {
 	inputs.property("versionGuiAccessorMixin", minecraftVersion == "1.21.11")
 	inputs.property("versionGameRendererMixin", minecraftVersion == "1.21.11")
 	inputs.property("versionScreenEffectsMixin", minecraftVersion == "1.21.11")
+	inputs.property("versionLevelLoadingScreenMixin", minecraftVersion == "1.21.11")
 	inputs.property("modId", modId)
 	inputs.property("modName", modName)
 	inputs.property("modDescription", modDescription)
@@ -156,7 +157,9 @@ tasks.withType<ProcessResources>().configureEach {
 			"legacy_screen_120_mixin" to if (minecraftVersion == "1.20") "\"LegacyScreen120Mixin\"," else "",
 			"version_gui_accessor_mixin" to if (minecraftVersion == "1.21.11") "\"GuiGraphicsAccessor\"," else "",
 			"version_game_renderer_mixin" to if (minecraftVersion == "1.21.11") "\"VersionedGameRendererMixin\"," else "",
-			"version_screen_effects_mixin" to if (minecraftVersion == "1.21.11") "\"VersionedScreenEffectsMixin\"," else ""
+			"version_screen_effects_mixin" to if (minecraftVersion == "1.21.11") "\"VersionedScreenEffectsMixin\"," else "",
+			"version_selection_list_mixin" to if (minecraftVersion == "1.21.11") "\"VersionedSelectionListMixin\"," else "",
+			"version_level_loading_screen_mixin" to if (minecraftVersion == "1.21.11") "\"VersionedLevelLoadingScreenMixin\"," else ""
 		)
 	}
 }

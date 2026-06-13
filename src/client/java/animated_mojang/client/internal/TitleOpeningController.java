@@ -48,7 +48,6 @@ public final class TitleOpeningController {
 	private static final float[] MULTIPLAYER_CAMERA = CameraProfiles.MULTIPLAYER.toArray();
 	private static final float[] OPTIONS_CAMERA = CameraProfiles.OPTIONS.toArray();
 	private static final float[] DIRECT_CONNECT_CAMERA = CameraProfiles.DIRECT_CONNECT.toArray();
-	private static final float[] CONNECT_CAMERA = CameraProfiles.CONNECT.toArray();
 	private static final float[] OPENER_START_CAMERA = CameraProfiles.OPENER_START.toArray();
 	private static final float[] OPENER_TRANSFER_CAMERA = CameraProfiles.OPENER_TRANSFER.toArray();
 	private static final long SCREEN_TRANSITION_MS = 500L;
@@ -59,6 +58,7 @@ public final class TitleOpeningController {
 	private static long screenTransitionStartedAt = -1L;
 	private static long screenTransitionDuration = SCREEN_TRANSITION_MS;
 	private static long forcedTransitionDuration;
+	private static boolean connectionFlowActive;
 
 	private TitleOpeningController() {
 	}
@@ -78,11 +78,15 @@ public final class TitleOpeningController {
 
 	public static boolean shouldHideTitleWidgets() {
 		return AnimatedMojangConfig.isMinecraftTitleAnimationEnabled() && isOpeningPlaying()
-				&& (getOpeningElapsedMillis() < MENU_REVEAL_MS || getTransitionProgress() < 1.0F);
+				&& getOpeningElapsedMillis() < MENU_REVEAL_MS;
 	}
 
 	public static boolean shouldRenderOpeningBackground() {
 		return openingPlayed;
+	}
+
+	public static boolean shouldSuppressMenuMusic() {
+		return !openingPlayed;
 	}
 
 	public static boolean shouldRenderDynamicScreenBackground() {
@@ -90,6 +94,14 @@ public final class TitleOpeningController {
 	}
 
 	public static boolean usesDynamicBackground(Screen screen) {
+		if (Minecraft.getInstance().level != null && !isTransitionScreen(screen)) {
+			connectionFlowActive = false;
+			return false;
+		}
+		updateConnectionFlow(screen);
+		if (connectionFlowActive) {
+			return true;
+		}
 		return screen instanceof TitleScreen || screen instanceof SelectWorldScreen || screen instanceof CreateWorldScreen
 				|| screen instanceof JoinMultiplayerScreen || screen instanceof ManageServerScreen
 				|| screen instanceof DirectJoinServerScreen || screen instanceof ConnectScreen
@@ -192,21 +204,39 @@ public final class TitleOpeningController {
 	}
 
 	private static float[] cameraForScreen(Screen screen) {
+		if (connectionFlowActive) return OPENER_START_CAMERA;
 		if (screen instanceof SelectWorldScreen || screen instanceof CreateWorldScreen) return SINGLEPLAYER_CAMERA;
 		if (screen instanceof JoinMultiplayerScreen) return MULTIPLAYER_CAMERA;
 		if (screen instanceof ManageServerScreen || screen instanceof DirectJoinServerScreen) return DIRECT_CONNECT_CAMERA;
-		if (screen instanceof ConnectScreen) return CONNECT_CAMERA;
-		if (screen instanceof DisconnectedScreen) return DIRECT_CONNECT_CAMERA;
+		if (screen instanceof ConnectScreen) return OPENER_START_CAMERA;
+		if (screen instanceof DisconnectedScreen) return OPENER_START_CAMERA;
 		if (isOptionsScreen(screen)) return OPTIONS_CAMERA;
 		if (screen instanceof TitleScreen) return TITLE_CAMERA;
 		return transitionTargetCamera;
 	}
 
 	private static boolean isLongScreenTransition(Screen screen) {
-		return screen instanceof ConnectScreen || screen instanceof DisconnectedScreen;
+		return connectionFlowActive || screen instanceof ConnectScreen || screen instanceof DisconnectedScreen;
 	}
 
-	private static boolean isOptionsScreen(Screen screen) {
+	private static void updateConnectionFlow(Screen screen) {
+		if (screen instanceof ConnectScreen) {
+			connectionFlowActive = true;
+			return;
+		}
+		if (connectionFlowActive && isExplicitConnectionExit(screen)) {
+			connectionFlowActive = false;
+		}
+	}
+
+	private static boolean isExplicitConnectionExit(Screen screen) {
+		return screen instanceof TitleScreen || screen instanceof JoinMultiplayerScreen
+				|| screen instanceof DirectJoinServerScreen || screen instanceof ManageServerScreen
+				|| screen instanceof SelectWorldScreen || screen instanceof CreateWorldScreen
+				|| isOptionsScreen(screen);
+	}
+
+	public static boolean isOptionsScreen(Screen screen) {
 		return screen instanceof OptionsScreen || screen instanceof OptionsSubScreen || screen instanceof PackSelectionScreen;
 	}
 

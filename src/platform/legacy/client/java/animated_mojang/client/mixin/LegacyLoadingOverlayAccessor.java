@@ -9,4 +9,7 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 public interface LegacyLoadingOverlayAccessor {
 	@Accessor("reload")
 	ReloadInstance animatedMojang$getReload();
+
+	@Accessor("fadeIn")
+	boolean animatedMojang$getFadeIn();
 }

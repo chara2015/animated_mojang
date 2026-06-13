@@ -1,0 +1,1388 @@
+==========================================
+LabyMod Lighting Important Sources
+==========================================
+
+
+==================================================
+FILE: java\net\labymod\api\laby3d\shaders\block\SchematicUniformBlock.java
+==================================================
+package net.labymod.api.laby3d.shaders.block;
+
+import java.util.List;
+import net.labymod.laby3d.api.RenderDevice;
+import net.labymod.laby3d.api.buffers.layout.DataType;
+import net.labymod.laby3d.api.buffers.layout.LayoutDefinition;
+import net.labymod.laby3d.api.shaders.UniformType;
+import net.labymod.laby3d.api.shaders.block.AbstractUniformBlock;
+import net.labymod.laby3d.api.shaders.block.property.ArrayUniformProperty;
+import net.labymod.laby3d.api.shaders.block.property.BooleanUniformProperty;
+import net.labymod.laby3d.api.shaders.block.property.FloatArrayUniformProperty;
+import net.labymod.laby3d.api.shaders.block.property.Matrix4fUniformProperty;
+import net.labymod.laby3d.api.shaders.block.property.UniformProperty;
+import net.labymod.laby3d.api.shaders.block.property.Vector3fArrayUniformProperty;
+import net.labymod.laby3d.api.util.Util;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+
+/* JADX INFO: loaded from: LabyMod-4.jar:net/labymod/api/laby3d/shaders/block/SchematicUniformBlock.class */
+public class SchematicUniformBlock extends AbstractUniformBlock {
+    public static final String NAME = "Schematic";
+    public static final int MAX_LIGHTS = 48;
+    public static final String MAX_LIGHTS_NAME = "MAX_LIGHTS";
+    private final UniformProperty<Matrix4f> projectionMatrix;
+    private final UniformProperty<Matrix4f> viewMatrix;
+    private final UniformProperty<Matrix4f> modelMatrix;
+    private final ArrayUniformProperty<Vector3f> lightSourcePosition;
+    private final ArrayUniformProperty<Vector3f> lightSourceColor;
+    private final ArrayUniformProperty<Float> lightSourceConstant;
+    private final ArrayUniformProperty<Float> lightSourceLinear;
+    private final ArrayUniformProperty<Float> lightSourceQuadratic;
+    private final UniformProperty<Boolean> lightSourceEnabled;
+    private static final String PROJECTION_MATRIX_NAME = "ProjectionMatrix";
+    private static final String VIEW_MATRIX_NAME = "ViewMatrix";
+    private static final String MODEL_MATRIX_NAME = "ModelMatrix";
+    private static final String LIGHT_SOURCE_ENABLED_NAME = "LightSourceEnabled";
+    private static final String LIGHT_SOURCE_POSITION_NAME = "LightSourcePosition";
+    private static final String LIGHT_SOURCE_COLOR_NAME = "LightSourceColor";
+    private static final String LIGHT_SOURCE_CONSTANT_NAME = "LightSourceConstant";
+    private static final String LIGHT_SOURCE_LINEAR_NAME = "LightSourceLinear";
+    private static final String LIGHT_SOURCE_QUADRATIC_NAME = "LightSourceQuadratic";
+    public static final LayoutDefinition LAYOUT = LayoutDefinition.std140().add(PROJECTION_MATRIX_NAME, DataType.MAT4, UniformType.MAT4).add(VIEW_MATRIX_NAME, DataType.MAT4, UniformType.MAT4).add(MODEL_MATRIX_NAME, DataType.MAT4, UniformType.MAT4).add(LIGHT_SOURCE_ENABLED_NAME, DataType.SCALAR, UniformType.FLOAT).addArray(LIGHT_SOURCE_POSITION_NAME, DataType.VEC3, UniformType.VEC3, 48).addArray(LIGHT_SOURCE_COLOR_NAME, DataType.VEC3, UniformType.VEC3, 48).addArray(LIGHT_SOURCE_CONSTANT_NAME, DataType.SCALAR, UniformType.FLOAT, 48).addArray(LIGHT_SOURCE_LINEAR_NAME, DataType.SCALAR, UniformType.FLOAT, 48).addArray(LIGHT_SOURCE_QUADRATIC_NAME, DataType.SCALAR, UniformType.FLOAT, 48).build();
+
+    public SchematicUniformBlock(RenderDevice device) {
+        super(device, NAME, LAYOUT);
+        this.projectionMatrix = createProperty(PROJECTION_MATRIX_NAME, Matrix4fUniformProperty::new);
+        this.viewMatrix = createProperty(VIEW_MATRIX_NAME, Matrix4fUniformProperty::new);
+        this.modelMatrix = createProperty(MODEL_MATRIX_NAME, Matrix4fUniformProperty::new);
+        this.lightSourceEnabled = createProperty(LIGHT_SOURCE_ENABLED_NAME, BooleanUniformProperty::new);
+        this.lightSourcePosition = createProperty(LIGHT_SOURCE_POSITION_NAME, (Vector3f[]) Util.fillArray(new Vector3f[48], Vector3f::new), Vector3fArrayUniformProperty::new);
+        this.lightSourceColor = createProperty(LIGHT_SOURCE_COLOR_NAME, (Vector3f[]) Util.fillArray(new Vector3f[48], Vector3f::new), Vector3fArrayUniformProperty::new);
+        this.lightSourceConstant = createProperty(LIGHT_SOURCE_CONSTANT_NAME, (Float[]) Util.fillArray(new Float[48], () -> {
+            return Float.valueOf(0.0f);
+        }), FloatArrayUniformProperty::new);
+        this.lightSourceLinear = createProperty(LIGHT_SOURCE_LINEAR_NAME, (Float[]) Util.fillArray(new Float[48], () -> {
+            return Float.valueOf(0.0f);
+        }), FloatArrayUniformProperty::new);
+        this.lightSourceQuadratic = createProperty(LIGHT_SOURCE_QUADRATIC_NAME, (Float[]) Util.fillArray(new Float[48], () -> {
+            return Float.valueOf(0.0f);
+        }), FloatArrayUniformProperty::new);
+    }
+
+    public UniformProperty<Matrix4f> projectionMatrix() {
+        return this.projectionMatrix;
+    }
+
+    public UniformProperty<Matrix4f> viewMatrix() {
+        return this.viewMatrix;
+    }
+
+    public UniformProperty<Matrix4f> modelMatrix() {
+        return this.modelMatrix;
+    }
+
+    public ArrayUniformProperty<Vector3f> lightSourcePosition() {
+        return this.lightSourcePosition;
+    }
+
+    public ArrayUniformProperty<Vector3f> lightSourceColor() {
+        return this.lightSourceColor;
+    }
+
+    public ArrayUniformProperty<Float> lightSourceConstant() {
+        return this.lightSourceConstant;
+    }
+
+    public ArrayUniformProperty<Float> lightSourceLinear() {
+        return this.lightSourceLinear;
+    }
+
+    public ArrayUniformProperty<Float> lightSourceQuadratic() {
+        return this.lightSourceQuadratic;
+    }
+
+    public UniformProperty<Boolean> lightSourceEnabled() {
+        return this.lightSourceEnabled;
+    }
+
+    protected List<UniformProperty<?>> buildProperties() {
+        return List.of(this.projectionMatrix, this.viewMatrix, this.modelMatrix, this.lightSourceEnabled, this.lightSourcePosition, this.lightSourceColor, this.lightSourceConstant, this.lightSourceLinear, this.lightSourceQuadratic);
+    }
+}
+
+==================================================
+FILE: java\net\labymod\api\laby3d\laby3d\shaders\block\SchematicUniformBlock.java
+==================================================
+package net.labymod.api.laby3d.shaders.block;
+
+import java.util.List;
+import net.labymod.laby3d.api.RenderDevice;
+import net.labymod.laby3d.api.buffers.layout.DataType;
+import net.labymod.laby3d.api.buffers.layout.LayoutDefinition;
+import net.labymod.laby3d.api.shaders.UniformType;
+import net.labymod.laby3d.api.shaders.block.AbstractUniformBlock;
+import net.labymod.laby3d.api.shaders.block.property.ArrayUniformProperty;
+import net.labymod.laby3d.api.shaders.block.property.BooleanUniformProperty;
+import net.labymod.laby3d.api.shaders.block.property.FloatArrayUniformProperty;
+import net.labymod.laby3d.api.shaders.block.property.Matrix4fUniformProperty;
+import net.labymod.laby3d.api.shaders.block.property.UniformProperty;
+import net.labymod.laby3d.api.shaders.block.property.Vector3fArrayUniformProperty;
+import net.labymod.laby3d.api.util.Util;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+
+/* JADX INFO: loaded from: LabyMod-4.jar:net/labymod/api/laby3d/shaders/block/SchematicUniformBlock.class */
+public class SchematicUniformBlock extends AbstractUniformBlock {
+    public static final String NAME = "Schematic";
+    public static final int MAX_LIGHTS = 48;
+    public static final String MAX_LIGHTS_NAME = "MAX_LIGHTS";
+    private final UniformProperty<Matrix4f> projectionMatrix;
+    private final UniformProperty<Matrix4f> viewMatrix;
+    private final UniformProperty<Matrix4f> modelMatrix;
+    private final ArrayUniformProperty<Vector3f> lightSourcePosition;
+    private final ArrayUniformProperty<Vector3f> lightSourceColor;
+    private final ArrayUniformProperty<Float> lightSourceConstant;
+    private final ArrayUniformProperty<Float> lightSourceLinear;
+    private final ArrayUniformProperty<Float> lightSourceQuadratic;
+    private final UniformProperty<Boolean> lightSourceEnabled;
+    private static final String PROJECTION_MATRIX_NAME = "ProjectionMatrix";
+    private static final String VIEW_MATRIX_NAME = "ViewMatrix";
+    private static final String MODEL_MATRIX_NAME = "ModelMatrix";
+    private static final String LIGHT_SOURCE_ENABLED_NAME = "LightSourceEnabled";
+    private static final String LIGHT_SOURCE_POSITION_NAME = "LightSourcePosition";
+    private static final String LIGHT_SOURCE_COLOR_NAME = "LightSourceColor";
+    private static final String LIGHT_SOURCE_CONSTANT_NAME = "LightSourceConstant";
+    private static final String LIGHT_SOURCE_LINEAR_NAME = "LightSourceLinear";
+    private static final String LIGHT_SOURCE_QUADRATIC_NAME = "LightSourceQuadratic";
+    public static final LayoutDefinition LAYOUT = LayoutDefinition.std140().add(PROJECTION_MATRIX_NAME, DataType.MAT4, UniformType.MAT4).add(VIEW_MATRIX_NAME, DataType.MAT4, UniformType.MAT4).add(MODEL_MATRIX_NAME, DataType.MAT4, UniformType.MAT4).add(LIGHT_SOURCE_ENABLED_NAME, DataType.SCALAR, UniformType.FLOAT).addArray(LIGHT_SOURCE_POSITION_NAME, DataType.VEC3, UniformType.VEC3, 48).addArray(LIGHT_SOURCE_COLOR_NAME, DataType.VEC3, UniformType.VEC3, 48).addArray(LIGHT_SOURCE_CONSTANT_NAME, DataType.SCALAR, UniformType.FLOAT, 48).addArray(LIGHT_SOURCE_LINEAR_NAME, DataType.SCALAR, UniformType.FLOAT, 48).addArray(LIGHT_SOURCE_QUADRATIC_NAME, DataType.SCALAR, UniformType.FLOAT, 48).build();
+
+    public SchematicUniformBlock(RenderDevice device) {
+        super(device, NAME, LAYOUT);
+        this.projectionMatrix = createProperty(PROJECTION_MATRIX_NAME, Matrix4fUniformProperty::new);
+        this.viewMatrix = createProperty(VIEW_MATRIX_NAME, Matrix4fUniformProperty::new);
+        this.modelMatrix = createProperty(MODEL_MATRIX_NAME, Matrix4fUniformProperty::new);
+        this.lightSourceEnabled = createProperty(LIGHT_SOURCE_ENABLED_NAME, BooleanUniformProperty::new);
+        this.lightSourcePosition = createProperty(LIGHT_SOURCE_POSITION_NAME, (Vector3f[]) Util.fillArray(new Vector3f[48], Vector3f::new), Vector3fArrayUniformProperty::new);
+        this.lightSourceColor = createProperty(LIGHT_SOURCE_COLOR_NAME, (Vector3f[]) Util.fillArray(new Vector3f[48], Vector3f::new), Vector3fArrayUniformProperty::new);
+        this.lightSourceConstant = createProperty(LIGHT_SOURCE_CONSTANT_NAME, (Float[]) Util.fillArray(new Float[48], () -> {
+            return Float.valueOf(0.0f);
+        }), FloatArrayUniformProperty::new);
+        this.lightSourceLinear = createProperty(LIGHT_SOURCE_LINEAR_NAME, (Float[]) Util.fillArray(new Float[48], () -> {
+            return Float.valueOf(0.0f);
+        }), FloatArrayUniformProperty::new);
+        this.lightSourceQuadratic = createProperty(LIGHT_SOURCE_QUADRATIC_NAME, (Float[]) Util.fillArray(new Float[48], () -> {
+            return Float.valueOf(0.0f);
+        }), FloatArrayUniformProperty::new);
+    }
+
+    public UniformProperty<Matrix4f> projectionMatrix() {
+        return this.projectionMatrix;
+    }
+
+    public UniformProperty<Matrix4f> viewMatrix() {
+        return this.viewMatrix;
+    }
+
+    public UniformProperty<Matrix4f> modelMatrix() {
+        return this.modelMatrix;
+    }
+
+    public ArrayUniformProperty<Vector3f> lightSourcePosition() {
+        return this.lightSourcePosition;
+    }
+
+    public ArrayUniformProperty<Vector3f> lightSourceColor() {
+        return this.lightSourceColor;
+    }
+
+    public ArrayUniformProperty<Float> lightSourceConstant() {
+        return this.lightSourceConstant;
+    }
+
+    public ArrayUniformProperty<Float> lightSourceLinear() {
+        return this.lightSourceLinear;
+    }
+
+    public ArrayUniformProperty<Float> lightSourceQuadratic() {
+        return this.lightSourceQuadratic;
+    }
+
+    public UniformProperty<Boolean> lightSourceEnabled() {
+        return this.lightSourceEnabled;
+    }
+
+    protected List<UniformProperty<?>> buildProperties() {
+        return List.of(this.projectionMatrix, this.viewMatrix, this.modelMatrix, this.lightSourceEnabled, this.lightSourcePosition, this.lightSourceColor, this.lightSourceConstant, this.lightSourceLinear, this.lightSourceQuadratic);
+    }
+}
+
+==================================================
+FILE: java\net\labymod\core\client\render\schematic\SchematicRenderer.java
+==================================================
+package net.labymod.core.client.render.schematic;
+
+import java.util.ArrayList;
+import java.util.List;
+import net.labymod.api.Laby;
+import net.labymod.api.LabyAPI;
+import net.labymod.api.Textures;
+import net.labymod.api.client.gfx.pipeline.texture.atlas.AtlasRegistry;
+import net.labymod.api.client.gfx.pipeline.texture.atlas.TextureAtlas;
+import net.labymod.api.client.render.RenderPipeline;
+import net.labymod.api.client.render.matrix.Stack;
+import net.labymod.api.configuration.loader.property.ConfigProperty;
+import net.labymod.api.laby3d.Laby3D;
+import net.labymod.api.laby3d.shaders.block.SchematicUniformBlock;
+import net.labymod.api.util.Disposable;
+import net.labymod.core.client.gui.background.DynamicBackgroundController;
+import net.labymod.core.client.render.schematic.block.Block;
+import net.labymod.core.client.render.schematic.block.BlockRenderer;
+import net.labymod.core.client.render.schematic.block.material.RenderLayer;
+import net.labymod.core.client.render.schematic.lighting.LightSourceRegistry;
+import net.labymod.core.client.render.schematic.lighting.legacy.LegacyLightEngine;
+import net.labymod.core.client.render.schematic.particle.ParticleRenderer;
+import net.labymod.core.client.render.schematic.renderer.RenderedSchematicLayer;
+import net.labymod.core.util.ArrayIndex;
+import net.labymod.core.util.camera.CinematicCamera;
+import net.labymod.core.util.camera.spline.position.Location;
+import net.labymod.laby3d.api.RenderDevice;
+import net.labymod.laby3d.api.pipeline.LoadOp;
+import net.labymod.laby3d.api.pipeline.pass.CommandBuffer;
+import net.labymod.laby3d.api.pipeline.target.RenderTarget;
+import org.joml.Vector3f;
+
+/* JADX INFO: loaded from: LabyMod-4.jar:net/labymod/core/client/render/schematic/SchematicRenderer.class */
+public class SchematicRenderer implements Disposable {
+    private final Schematic schematic;
+    private final DynamicBackgroundController backgroundController;
+    private final BlockRenderer blockRenderer;
+    private final ParticleRenderer particleRenderer;
+    private final List<RenderHook> renderHooks = new ArrayList();
+    private int liquidUpdateTicks = 0;
+    private final LabyAPI labyAPI = Laby.labyAPI();
+    private final Laby3D laby3D = Laby.references().laby3D();
+    private final ConfigProperty<Boolean> animatedTextures = this.labyAPI.config().appearance().dynamicBackground().animatedTextures();
+    private final CinematicCamera camera = new ShaderCamera(50.0f);
+    private final AtlasRegistry atlasRegistry = Laby.references().atlasRegistry();
+    private final ArrayIndex<RenderedSchematicLayer> layers = new ArrayIndex<>(RenderLayer.values().length, x$0 -> {
+        return new RenderedSchematicLayer[x$0];
+    });
+
+    /* JADX INFO: loaded from: LabyMod-4.jar:net/labymod/core/client/render/schematic/SchematicRenderer$RenderHook.class */
+    public interface RenderHook {
+        void render(CommandBuffer commandBuffer, Stack stack, float f, float f2, float f3, float f4, float f5);
+    }
+
+    public SchematicRenderer(DynamicBackgroundController controller, Schematic schematic) {
+        this.schematic = schematic;
+        this.backgroundController = controller;
+        this.blockRenderer = new BlockRenderer(schematic);
+        this.particleRenderer = new ParticleRenderer(schematic, this.camera, controller);
+        this.layers.fill(index -> {
+            return new RenderedSchematicLayer(RenderLayer.values()[index], controller);
+        });
+    }
+
+    public void onTick() {
+        this.particleRenderer.onTick();
+        LightSourceRegistry.getInstance().tick();
+        if (this.liquidUpdateTicks > 6 && this.animatedTextures.get().booleanValue()) {
+            this.liquidUpdateTicks = 0;
+            RenderedSchematicLayer layer = this.layers.get(RenderLayer.LIQUID.ordinal());
+            if (layer != null) {
+                layer.setDirty();
+            }
+        }
+        this.liquidUpdateTicks++;
+    }
+
+    public void onRenderTick(Stack stack, float left, float top, float right, float bottom, float partialTicks) {
+        this.camera.setup(left, top, right, bottom, partialTicks);
+    }
+
+    public void render(Stack stack, float left, float top, float right, float bottom, float partialTicks) {
+        stack.push();
+        stack.identity();
+        this.camera.setup(left, top, right, bottom, partialTicks);
+        float tickDelta = Laby.labyAPI().minecraft().getTickDelta();
+        this.camera.update(left, top, right, bottom, tickDelta);
+        RenderDevice renderDevice = this.laby3D.renderDevice();
+        RenderTarget renderTarget = Laby.references().gfxRenderPipeline().currentTarget();
+        this.backgroundController.configureBackground();
+        CommandBuffer cmd = renderDevice.createCommandBuffer(1);
+        try {
+            cmd.beginPass(renderTarget, LoadOp.CLEAR, () -> {
+                return SchematicUniformBlock.NAME;
+            });
+            renderLayer(cmd, this.atlasRegistry.getAtlas(Textures.Splash.BLOCKS), RenderLayer.CUBE);
+            renderLayer(cmd, this.atlasRegistry.getAtlas(Textures.Splash.LAVA_FLOW), RenderLayer.LIQUID);
+            renderLayer(cmd, this.atlasRegistry.getAtlas(Textures.Splash.BLOCKS), RenderLayer.CUT_OUT);
+            this.layers.forEach(renderedSchematicLayer -> {
+                renderedSchematicLayer.upload(cmd);
+            });
+            this.particleRenderer.render(cmd, this.atlasRegistry.getAtlas(Textures.Splash.PARTICLES), partialTicks);
+            for (RenderHook hook : this.renderHooks) {
+                hook.render(cmd, stack, left, top, right, bottom, partialTicks);
+            }
+            cmd.endPass();
+            cmd.submit();
+            if (cmd != null) {
+                cmd.close();
+            }
+            Location position = this.camera.location();
+            LightSourceRegistry registry = LightSourceRegistry.getInstance();
+            registry.sort(new Vector3f((float) position.getX(), (float) position.getY(), (float) position.getZ()));
+            stack.pop();
+            this.schematic.legacyLightEngine().handleLightUpdates();
+        } catch (Throwable th) {
+            if (cmd != null) {
+                try {
+                    cmd.close();
+                } catch (Throwable th2) {
+                    th.addSuppressed(th2);
+                }
+            }
+            throw th;
+        }
+    }
+
+    private void renderLayer(CommandBuffer cmd, TextureAtlas atlas, RenderLayer type) {
+        RenderedSchematicLayer layer = this.layers.get(type.ordinal());
+        if (layer == null) {
+            return;
+        }
+        if (layer.isAnyMeshIndexBufferClosed()) {
+            setDirty();
+        }
+        layer.setAtlas(atlas);
+        LegacyLightEngine lightEngine = this.schematic.legacyLightEngine();
+        if (lightEngine == layer.getLightEngine() && !lightEngine.isDirty() && !layer.isDirty() && layer.renderMesh(cmd)) {
+            return;
+        }
+        int chunksInWidth = this.schematic.getChunksInWidth();
+        int chunksInHeight = this.schematic.getChunksInHeight();
+        int chunksInLength = this.schematic.getChunksInLength();
+        for (int chunkX = 0; chunkX < chunksInWidth; chunkX++) {
+            for (int chunkY = 0; chunkY < chunksInHeight; chunkY++) {
+                for (int chunkZ = 0; chunkZ < chunksInLength; chunkZ++) {
+                    renderChunk(cmd, layer, type, chunkX, chunkY, chunkZ);
+                }
+            }
+        }
+        layer.setLightEngine(lightEngine);
+    }
+
+    private void renderChunk(CommandBuffer cmd, RenderedSchematicLayer layer, RenderLayer type, int chunkX, int chunkY, int chunkZ) {
+        int minX = chunkX * 16;
+        int minY = chunkY * 16;
+        int minZ = chunkZ * 16;
+        int maxX = Math.min(minX + 16, (int) this.schematic.getWidth());
+        int maxY = Math.min(minY + 16, (int) this.schematic.getHeight());
+        int maxZ = Math.min(minZ + 16, (int) this.schematic.getLength());
+        RenderPipeline renderPipeline = Laby.references().renderPipeline();
+        renderPipeline.setModifiedAlpha(false);
+        for (int x = minX; x < maxX; x++) {
+            for (int y = minY; y < maxY; y++) {
+                for (int z = minZ; z < maxZ; z++) {
+                    Block block = this.schematic.getBlockAt(x, y, z);
+                    RenderLayer renderLayer = block.material().getRenderLayer();
+                    if (renderLayer == type) {
+                        layer.render(this.blockRenderer, block, x, y, z);
+                    }
+                }
+            }
+        }
+        renderPipeline.setModifiedAlpha(true);
+        layer.uploadChunk();
+    }
+
+    public void registerRenderHook(RenderHook hook) {
+        this.renderHooks.add(hook);
+    }
+
+    public CinematicCamera camera() {
+        return this.camera;
+    }
+
+    public ParticleRenderer particleRenderer() {
+        return this.particleRenderer;
+    }
+
+    public Schematic schematic() {
+        return this.schematic;
+    }
+
+    public void setDirty() {
+        this.layers.forEach((v0) -> {
+            v0.setDirty();
+        });
+    }
+
+    @Override // net.labymod.api.util.Disposable
+    public void dispose() {
+        this.layers.forEach((v0) -> {
+            v0.dispose();
+        });
+        LightSourceRegistry.getInstance().reset();
+    }
+}
+
+==================================================
+FILE: java\net\labymod\core\client\render\schematic\ShaderCamera.java
+==================================================
+package net.labymod.core.client.render.schematic;
+
+import java.util.function.Consumer;
+import net.labymod.core.util.camera.CinematicCamera;
+
+/* JADX INFO: loaded from: LabyMod-4.jar:net/labymod/core/client/render/schematic/ShaderCamera.class */
+public class ShaderCamera extends CinematicCamera {
+    private static Consumer<CinematicCamera> shaderHook;
+
+    public ShaderCamera(float fov) {
+        super(fov);
+    }
+
+    @Override // net.labymod.core.util.camera.CinematicCamera
+    public void setup(float left, float top, float right, float bottom, float partialTicks) {
+        super.setup(left, top, right, bottom, partialTicks);
+        if (shaderHook != null) {
+            shaderHook.accept(this);
+        }
+    }
+
+    public static void setShaderHook(Consumer<CinematicCamera> cameraConsumer) {
+        shaderHook = cameraConsumer;
+    }
+}
+
+==================================================
+FILE: java\net\labymod\core\client\render\schematic\block\BlockRenderer.java
+==================================================
+package net.labymod.core.client.render.schematic.block;
+
+import net.labymod.api.client.gfx.pipeline.texture.atlas.TextureAtlas;
+import net.labymod.api.client.gfx.pipeline.texture.atlas.TextureUV;
+import net.labymod.api.util.math.MathHelper;
+import net.labymod.api.util.math.vector.FloatVector3;
+import net.labymod.core.client.gui.background.DynamicBackgroundController;
+import net.labymod.core.client.render.schematic.SchematicAccessor;
+import net.labymod.core.client.render.schematic.block.material.BoundingBox;
+import net.labymod.core.client.render.schematic.block.material.material.Material;
+import net.labymod.core.client.render.schematic.lighting.LightSource;
+import net.labymod.core.client.render.schematic.lighting.LightSourceRegistry;
+import net.labymod.core.client.render.schematic.lighting.legacy.LegacyLightEngine;
+import net.labymod.laby3d.api.vertex.VertexConsumer;
+
+/* JADX INFO: loaded from: LabyMod-4.jar:net/labymod/core/client/render/schematic/block/BlockRenderer.class */
+public class BlockRenderer {
+    private final SchematicAccessor schematic;
+
+    public BlockRenderer(SchematicAccessor level) {
+        this.schematic = level;
+    }
+
+    public void renderCube(TextureAtlas atlas, VertexConsumer consumer, Block block, int x, int y, int z) {
+        Material material = block.material();
+        BoundingBox boundingBox = material.getBoundingBox(this.schematic, x, y, z, block);
+        LightSource lightSource = material.createLightSource(x, y, z, block);
+        if (lightSource != null) {
+            LightSourceRegistry.getInstance().addLightSource(lightSource);
+            block.setLightSource(lightSource);
+        }
+        material.render(this, atlas, consumer, block, this.schematic, x, y, z, boundingBox);
+    }
+
+    public void renderFace(TextureAtlas atlas, VertexConsumer consumer, Block block, Face face, int x, int y, int z, BoundingBox bb) {
+        Material material = block.material();
+        TextureUV uv = material.getUV(this.schematic, x, y, z, atlas, block, face);
+        if (uv == null) {
+            return;
+        }
+        renderFace(consumer, block, face, x, y, z, bb, uv);
+    }
+
+    public void renderFace(VertexConsumer consumer, Block block, Face face, int x, int y, int z, BoundingBox bb, TextureUV uv) {
+        Material material = block.material();
+        float minU = uv.getMinU();
+        float minV = uv.getMinV();
+        float maxU = uv.getMaxU();
+        float maxV = uv.getMaxV();
+        int color = material.getColor(block, face);
+        float r = ((color >> 16) & 255) / 255.0f;
+        float g = ((color >> 8) & 255) / 255.0f;
+        float b = (color & 255) / 255.0f;
+        int rot = material.getTextureRotation();
+        switch (face) {
+            case TOP:
+                renderCorner(consumer, face, x, y, z, bb.getCorner(4, rot), minU, maxV, r, g, b);
+                renderCorner(consumer, face, x, y, z, bb.getCorner(5, rot), minU, minV, r, g, b);
+                renderCorner(consumer, face, x, y, z, bb.getCorner(7, rot), maxU, minV, r, g, b);
+                renderCorner(consumer, face, x, y, z, bb.getCorner(6, rot), maxU, maxV, r, g, b);
+                break;
+            case BOTTOM:
+                renderCorner(consumer, face, x, y, z, bb.getCorner(1, rot), maxU, maxV, r, g, b);
+                renderCorner(consumer, face, x, y, z, bb.getCorner(0, rot), maxU, minV, r, g, b);
+                renderCorner(consumer, face, x, y, z, bb.getCorner(2, rot), minU, minV, r, g, b);
+                renderCorner(consumer, face, x, y, z, bb.getCorner(3, rot), minU, maxV, r, g, b);
+                break;
+            case NORTH:
+                renderCorner(consumer, face, x, y, z, bb.getCorner(4), minU, minV, r, g, b);
+                renderCorner(consumer, face, x, y, z, bb.getCorner(6), maxU, minV, r, g, b);
+                renderCorner(consumer, face, x, y, z, bb.getCorner(2), maxU, maxV, r, g, b);
+                renderCorner(consumer, face, x, y, z, bb.getCorner(0), minU, maxV, r, g, b);
+                break;
+            case EAST:
+                renderCorner(consumer, face, x, y, z, bb.getCorner(6), minU, minV, r, g, b);
+                renderCorner(consumer, face, x, y, z, bb.getCorner(7), maxU, minV, r, g, b);
+                renderCorner(consumer, face, x, y, z, bb.getCorner(3), maxU, maxV, r, g, b);
+                renderCorner(consumer, face, x, y, z, bb.getCorner(2), minU, maxV, r, g, b);
+                break;
+            case SOUTH:
+                renderCorner(consumer, face, x, y, z, bb.getCorner(1), maxU, maxV, r, g, b);
+                renderCorner(consumer, face, x, y, z, bb.getCorner(3), minU, maxV, r, g, b);
+                renderCorner(consumer, face, x, y, z, bb.getCorner(7), minU, minV, r, g, b);
+                renderCorner(consumer, face, x, y, z, bb.getCorner(5), maxU, minV, r, g, b);
+                break;
+            case WEST:
+                renderCorner(consumer, face, x, y, z, bb.getCorner(0), maxU, maxV, r, g, b);
+                renderCorner(consumer, face, x, y, z, bb.getCorner(1), minU, maxV, r, g, b);
+                renderCorner(consumer, face, x, y, z, bb.getCorner(5), minU, minV, r, g, b);
+                renderCorner(consumer, face, x, y, z, bb.getCorner(4), maxU, minV, r, g, b);
+                break;
+        }
+    }
+
+    private void renderCorner(VertexConsumer consumer, Face face, int x, int y, int z, FloatVector3 offset, float u, float v, float red, float green, float blue) {
+        float posX = x + offset.getX();
+        float posY = y + offset.getY();
+        float posZ = z + offset.getZ();
+        consumer.addVertex(posX, posY, posZ).setUv(u, v);
+        int blockX = MathHelper.floor(posX);
+        int blockY = MathHelper.floor(posY);
+        int blockZ = MathHelper.floor(posZ);
+        LegacyLightEngine engine = this.schematic.legacyLightEngine();
+        consumer.setColor(red * engine.getRedStrengthAt(blockX, blockY, blockZ), green * engine.getGreenStrengthAt(blockX, blockY, blockZ), blue * engine.getBlueStrengthAt(blockX, blockY, blockZ), 1.0f).setFloat(DynamicBackgroundController.LIGHTING ? 2.0f : 0.0f).setNormal(face.getX(), face.getY(), face.getZ());
+    }
+}
+
+==================================================
+FILE: java\net\labymod\core\client\render\schematic\block\Face.java
+==================================================
+package net.labymod.core.client.render.schematic.block;
+
+/* JADX INFO: loaded from: LabyMod-4.jar:net/labymod/core/client/render/schematic/block/Face.class */
+public enum Face {
+    TOP(0, 1, 0),
+    BOTTOM(0, -1, 0),
+    NORTH(0, 0, -1),
+    EAST(1, 0, 0),
+    SOUTH(0, 0, 1),
+    WEST(-1, 0, 0);
+
+    public static final Face[] VALUES = values();
+    private final int x;
+    private final int y;
+    private final int z;
+
+    Face(int x, int y, int z) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
+
+    public int getX() {
+        return this.x;
+    }
+
+    public int getY() {
+        return this.y;
+    }
+
+    public int getZ() {
+        return this.z;
+    }
+
+    public float getShading() {
+        if (isXAxis()) {
+            return 0.6f;
+        }
+        return isYAxis() ? 1.0f : 0.8f;
+    }
+
+    public boolean isXAxis() {
+        return this.x != 0;
+    }
+
+    public boolean isYAxis() {
+        return this.y != 0;
+    }
+
+    public boolean isZAxis() {
+        return this.z != 0;
+    }
+
+    /* JADX INFO: Thrown type has an unknown type hierarchy: java.lang.MatchException */
+    public Face opposite() throws MatchException {
+        switch (this) {
+            case TOP:
+                return BOTTOM;
+            case BOTTOM:
+                return TOP;
+            case NORTH:
+                return SOUTH;
+            case EAST:
+                return WEST;
+            case SOUTH:
+                return NORTH;
+            case WEST:
+                return EAST;
+            default:
+                throw new MatchException((String) null, (Throwable) null);
+        }
+    }
+}
+
+==================================================
+FILE: java\net\labymod\core\client\render\schematic\lighting\LightSource.java
+==================================================
+package net.labymod.core.client.render.schematic.lighting;
+
+import org.joml.Vector3f;
+
+/* JADX INFO: loaded from: LabyMod-4.jar:net/labymod/core/client/render/schematic/lighting/LightSource.class */
+public interface LightSource {
+    Vector3f getPosition();
+
+    default void tick() {
+    }
+}
+
+==================================================
+FILE: java\net\labymod\core\client\render\schematic\lighting\LightSourceRegistry.java
+==================================================
+package net.labymod.core.client.render.schematic.lighting;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import net.labymod.api.util.math.MathHelper;
+import org.joml.Vector3f;
+
+/* JADX INFO: loaded from: LabyMod-4.jar:net/labymod/core/client/render/schematic/lighting/LightSourceRegistry.class */
+public final class LightSourceRegistry {
+    private static LightSourceRegistry instance;
+    private final Vector3f previousCameraPosition = new Vector3f();
+    private final List<LightSource> lightSources = new ArrayList();
+
+    public static LightSourceRegistry getInstance() {
+        if (instance == null) {
+            instance = new LightSourceRegistry();
+        }
+        return instance;
+    }
+
+    public void sort(Vector3f cameraPosition) {
+        if (this.previousCameraPosition.equals(cameraPosition)) {
+            return;
+        }
+        this.previousCameraPosition.set(cameraPosition);
+        this.lightSources.sort(Comparator.comparingDouble(value -> {
+            Vector3f position = value.getPosition();
+            float horizontalDistance = MathHelper.square(position.x() - cameraPosition.x()) + MathHelper.square(position.z() - cameraPosition.z());
+            float verticalDistance = MathHelper.square(position.y() - cameraPosition.y());
+            return (verticalDistance * 100.0f) + horizontalDistance;
+        }));
+    }
+
+    public void addLightSource(LightSource lightSource) {
+        if (this.lightSources.contains(lightSource)) {
+            return;
+        }
+        this.lightSources.add(lightSource);
+        this.previousCameraPosition.set(0.0f, 0.0f, 0.0f);
+    }
+
+    public void remove(PointLightSource source) {
+        this.lightSources.remove(source);
+    }
+
+    public void reset() {
+        this.lightSources.clear();
+        this.previousCameraPosition.set(0.0f, 0.0f, 0.0f);
+    }
+
+    public void tick() {
+        for (LightSource lightSource : this.lightSources) {
+            lightSource.tick();
+        }
+    }
+
+    public List<LightSource> getLightSources() {
+        return this.lightSources;
+    }
+}
+
+==================================================
+FILE: java\net\labymod\core\client\render\schematic\lighting\PointLightSource.java
+==================================================
+package net.labymod.core.client.render.schematic.lighting;
+
+import org.joml.Vector3f;
+
+/* JADX INFO: loaded from: LabyMod-4.jar:net/labymod/core/client/render/schematic/lighting/PointLightSource.class */
+public class PointLightSource implements LightSource {
+    public static final Vector3f WHITE = new Vector3f(0.5f, 0.5f, 0.5f);
+    private final Vector3f position = new Vector3f(0.0f, 0.0f, 0.0f);
+    private final Vector3f color = new Vector3f(1.0f, 1.0f, 1.0f);
+    private float constant = 1.0f;
+    private float linear = 0.09f;
+    private float quadratic = 0.0512f;
+
+    @Override // net.labymod.core.client.render.schematic.lighting.LightSource
+    public Vector3f getPosition() {
+        return this.position;
+    }
+
+    public Vector3f getColor() {
+        return this.color;
+    }
+
+    public float getConstant() {
+        return this.constant;
+    }
+
+    public void setConstant(float constant) {
+        this.constant = constant;
+    }
+
+    public float getLinear() {
+        return this.linear;
+    }
+
+    public void setLinear(float linear) {
+        this.linear = linear;
+    }
+
+    public float getQuadratic() {
+        return this.quadratic;
+    }
+
+    public void setQuadratic(float quadratic) {
+        this.quadratic = quadratic;
+    }
+
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        PointLightSource that = (PointLightSource) o;
+        return this.position.equals(that.position);
+    }
+
+    public int hashCode() {
+        return this.position.hashCode();
+    }
+}
+
+==================================================
+FILE: java\net\labymod\core\client\render\schematic\lighting\legacy\ColoredLegacyLightEngine.java
+==================================================
+package net.labymod.core.client.render.schematic.lighting.legacy;
+
+import net.labymod.api.util.math.MathHelper;
+import net.labymod.core.client.render.schematic.SchematicAccessor;
+import net.labymod.core.client.render.schematic.block.Block;
+
+/* JADX INFO: loaded from: LabyMod-4.jar:net/labymod/core/client/render/schematic/lighting/legacy/ColoredLegacyLightEngine.class */
+public class ColoredLegacyLightEngine implements WorldLightAccessor, LegacyLightEngine {
+    private final SchematicAccessor world;
+    private final DefaultLegacyLightEngine redEngine;
+    private final DefaultLegacyLightEngine greenEngine;
+    private final DefaultLegacyLightEngine blueEngine;
+
+    public ColoredLegacyLightEngine(SchematicAccessor world, int width, int height, int length, int redSkyLevel, int greenSkyLevel, int blueSkyLevel) {
+        this.world = world;
+        this.redEngine = new DefaultLegacyLightEngine(this, width, height, length, redSkyLevel);
+        this.greenEngine = new DefaultLegacyLightEngine(this, width, height, length, greenSkyLevel);
+        this.blueEngine = new DefaultLegacyLightEngine(this, width, height, length, blueSkyLevel);
+    }
+
+    @Override // net.labymod.core.client.render.schematic.lighting.legacy.WorldLightAccessor
+    public Block getBlockAt(int x, int y, int z) {
+        return this.world.getBlockAt(x, y, z);
+    }
+
+    @Override // net.labymod.core.client.render.schematic.lighting.legacy.WorldLightAccessor
+    public boolean isLightSource(int x, int y, int z) {
+        return this.world.isLightSource(x, y, z);
+    }
+
+    @Override // net.labymod.core.client.render.schematic.lighting.legacy.WorldLightAccessor
+    public boolean isTranslucent(int x, int y, int z) {
+        return this.world.isTranslucent(x, y, z);
+    }
+
+    @Override // net.labymod.core.client.render.schematic.lighting.legacy.WorldLightAccessor
+    public boolean isFullBlock(int x, int y, int z) {
+        return this.world.isFullBlock(x, y, z);
+    }
+
+    @Override // net.labymod.core.client.render.schematic.lighting.legacy.WorldLightAccessor
+    public int getLightLevel(DefaultLegacyLightEngine engine, Block block) {
+        int maxLevel = block.material().getLight(block);
+        int color = block.material().getLightColor(block);
+        int red = (color >> 16) & 255;
+        int green = (color >> 8) & 255;
+        int blue = color & 255;
+        int maxColor = Math.max(Math.max(red, green), blue);
+        if (maxColor > 0) {
+            float factor = 255.0f / maxColor;
+            red = applyColorCorrectionPre(red, factor, 0);
+            green = applyColorCorrectionPre(green, factor, 1);
+            blue = applyColorCorrectionPre(blue, factor, 2);
+        }
+        if (engine == this.redEngine) {
+            return (int) ((maxLevel / 255.0f) * red);
+        }
+        if (engine == this.greenEngine) {
+            return (int) ((maxLevel / 255.0f) * green);
+        }
+        if (engine == this.blueEngine) {
+            return (int) ((maxLevel / 255.0f) * blue);
+        }
+        return 0;
+    }
+
+    @Override // net.labymod.core.client.render.schematic.lighting.legacy.LegacyLightEngine
+    public int getLightAt(int x, int y, int z) {
+        return Math.max(Math.max(this.redEngine.getLightAt(x, y, z), this.greenEngine.getLightAt(x, y, z)), this.blueEngine.getLightAt(x, y, z));
+    }
+
+    @Override // net.labymod.core.client.render.schematic.lighting.legacy.LegacyLightEngine
+    public float getRedStrengthAt(int x, int y, int z) {
+        float level = this.redEngine.getAverageLightLevelAt(x, y, z);
+        return applyColorCorrectionPost(getStrengthFrom(level), 0);
+    }
+
+    @Override // net.labymod.core.client.render.schematic.lighting.legacy.LegacyLightEngine
+    public float getGreenStrengthAt(int x, int y, int z) {
+        float level = this.greenEngine.getAverageLightLevelAt(x, y, z);
+        return applyColorCorrectionPost(getStrengthFrom(level), 1);
+    }
+
+    @Override // net.labymod.core.client.render.schematic.lighting.legacy.LegacyLightEngine
+    public float getBlueStrengthAt(int x, int y, int z) {
+        float level = this.blueEngine.getAverageLightLevelAt(x, y, z);
+        return applyColorCorrectionPost(getStrengthFrom(level), 2);
+    }
+
+    @Override // net.labymod.core.client.render.schematic.lighting.legacy.LegacyLightEngine
+    public void handleLightUpdates() {
+        this.redEngine.handleLightUpdates();
+        this.greenEngine.handleLightUpdates();
+        this.blueEngine.handleLightUpdates();
+    }
+
+    @Override // net.labymod.core.client.render.schematic.lighting.legacy.LegacyLightEngine
+    public boolean isDirty() {
+        return this.redEngine.isDirty() || this.greenEngine.isDirty() || this.blueEngine.isDirty();
+    }
+
+    @Override // net.labymod.core.client.render.schematic.lighting.legacy.LegacyLightEngine
+    public boolean isInProgress() {
+        return this.redEngine.isInProgress() || this.greenEngine.isInProgress() || this.blueEngine.isInProgress();
+    }
+
+    @Override // net.labymod.core.client.render.schematic.lighting.legacy.LegacyLightEngine
+    public void reset() {
+        this.redEngine.reset();
+        this.greenEngine.reset();
+        this.blueEngine.reset();
+    }
+
+    @Override // net.labymod.core.client.render.schematic.lighting.legacy.LegacyLightEngine
+    public float getAverageLightLevelAt(int x, int y, int z) {
+        return Math.max(Math.max(this.redEngine.getAverageLightLevelAt(x, y, z), this.greenEngine.getAverageLightLevelAt(x, y, z)), this.blueEngine.getAverageLightLevelAt(x, y, z));
+    }
+
+    @Override // net.labymod.core.client.render.schematic.lighting.legacy.LegacyLightEngine
+    public byte[] getData() {
+        throw new UnsupportedOperationException("Select an engine first");
+    }
+
+    @Override // net.labymod.core.client.render.schematic.lighting.legacy.LegacyLightEngine
+    public void setData(byte[] data) {
+        throw new UnsupportedOperationException("Select an engine first");
+    }
+
+    private int applyColorCorrectionPre(int value, float factor, int channel) {
+        return (int) MathHelper.clamp(value * factor * 1.45f, 0.0f, 255.0f);
+    }
+
+    private float applyColorCorrectionPost(float strength, int channel) {
+        return (float) Math.min(Math.pow(2.718281828459045d, (-2.5f) + (strength * 2.5f)), 1.0d);
+    }
+
+    @Override // net.labymod.core.client.render.schematic.lighting.legacy.LegacyLightEngine
+    public float applyBrightness(float value) {
+        float x = brightnessSetting.get().floatValue();
+        float curve = ((float) (-Math.pow(2.718281828459045d, 1.0f - (x * 1.2f)))) + 1.718f;
+        return Math.min(value * curve, 1.0f);
+    }
+
+    public DefaultLegacyLightEngine getRedEngine() {
+        return this.redEngine;
+    }
+
+    public DefaultLegacyLightEngine getGreenEngine() {
+        return this.greenEngine;
+    }
+
+    public DefaultLegacyLightEngine getBlueEngine() {
+        return this.blueEngine;
+    }
+}
+
+==================================================
+FILE: java\net\labymod\core\client\render\schematic\lighting\legacy\DefaultLegacyLightEngine.java
+==================================================
+package net.labymod.core.client.render.schematic.lighting.legacy;
+
+import java.util.Arrays;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
+import net.labymod.core.client.render.schematic.block.Block;
+
+/* JADX INFO: loaded from: LabyMod-4.jar:net/labymod/core/client/render/schematic/lighting/legacy/DefaultLegacyLightEngine.class */
+public class DefaultLegacyLightEngine implements LegacyLightEngine {
+    private final WorldLightAccessor world;
+    private final int width;
+    private final int height;
+    private final int length;
+    private final int skyLight;
+    private byte[] light;
+    private final Queue<Integer> lightUpdateQueue = new LinkedBlockingQueue();
+    private boolean dirty = true;
+
+    public DefaultLegacyLightEngine(WorldLightAccessor world, int width, int height, int length, int skyLight) {
+        this.world = world;
+        this.width = width;
+        this.height = height;
+        this.length = length;
+        this.skyLight = skyLight;
+        this.light = new byte[this.width * this.height * this.length];
+        Arrays.fill(this.light, (byte) -1);
+    }
+
+    private void updateLight(int x, int y, int z) {
+        Block block = this.world.getBlockAt(x, y, z);
+        int level = this.world.getLightLevel(this, block);
+        if (block.material().isTranslucent()) {
+            level = Math.max(level, this.skyLight);
+        }
+        if (x > 0) {
+            level = Math.max(level, getLightAt(x - 1, y, z) - 1);
+        }
+        if (x < this.width - 1) {
+            level = Math.max(level, getLightAt(x + 1, y, z) - 1);
+        }
+        if (y > 0) {
+            level = Math.max(level, getLightAt(x, y - 1, z) - 1);
+        }
+        if (y < this.height - 1) {
+            level = Math.max(level, getLightAt(x, y + 1, z) - 1);
+        }
+        if (z > 0) {
+            level = Math.max(level, getLightAt(x, y, z - 1) - 1);
+        }
+        if (z < this.length - 1) {
+            level = Math.max(level, getLightAt(x, y, z + 1) - 1);
+        }
+        int previousLevel = getLightAt(x, y, z);
+        if (level != previousLevel) {
+            setLightAt(x, y, z, (byte) level);
+            if (x > 0) {
+                queueLightUpdate(x - 1, y, z);
+            }
+            if (x < this.width - 1) {
+                queueLightUpdate(x + 1, y, z);
+            }
+            if (y > 0) {
+                queueLightUpdate(x, y - 1, z);
+            }
+            if (y < this.height - 1) {
+                queueLightUpdate(x, y + 1, z);
+            }
+            if (z > 0) {
+                queueLightUpdate(x, y, z - 1);
+            }
+            if (z < this.length - 1) {
+                queueLightUpdate(x, y, z + 1);
+            }
+        }
+    }
+
+    @Override // net.labymod.core.client.render.schematic.lighting.legacy.LegacyLightEngine
+    public void handleLightUpdates() {
+        Integer index;
+        this.dirty = false;
+        for (int i = 0; i <= 1000000 && (index = this.lightUpdateQueue.poll()) != null; i++) {
+            int x = index.intValue() % this.width;
+            int y = index.intValue() / (this.width * this.length);
+            int z = (index.intValue() / this.width) % this.length;
+            updateLight(x, y, z);
+        }
+    }
+
+    public void queueLightUpdate(int x, int y, int z) {
+        if (this.lightUpdateQueue.size() < 1000) {
+            int index = getIndex(x, y, z);
+            this.lightUpdateQueue.add(Integer.valueOf(index));
+        }
+    }
+
+    private int getIndex(int x, int y, int z) {
+        return (((y * this.length) + z) * this.width) + x;
+    }
+
+    @Override // net.labymod.core.client.render.schematic.lighting.legacy.LegacyLightEngine
+    public int getLightAt(int x, int y, int z) {
+        int index = getIndex(x, y, z);
+        if (index < 0 || index >= this.light.length) {
+            return 0;
+        }
+        byte level = this.light[index];
+        if (level == -1) {
+            queueLightUpdate(x, y, z);
+        }
+        return level;
+    }
+
+    public void setLightAt(int x, int y, int z, byte level) {
+        int index = getIndex(x, y, z);
+        if (index < 0 || index >= this.light.length) {
+            return;
+        }
+        this.light[index] = level;
+        this.dirty = true;
+    }
+
+    @Override // net.labymod.core.client.render.schematic.lighting.legacy.LegacyLightEngine
+    public void reset() {
+        this.lightUpdateQueue.clear();
+        Arrays.fill(this.light, (byte) -1);
+        this.dirty = true;
+    }
+
+    @Override // net.labymod.core.client.render.schematic.lighting.legacy.LegacyLightEngine
+    public float getAverageLightLevelAt(int x, int y, int z) {
+        int totalLightLevel = 0;
+        int totalBlocks = 0;
+        for (int offsetX = -1; offsetX <= 0; offsetX++) {
+            for (int offsetY = -1; offsetY <= 0; offsetY++) {
+                for (int offsetZ = -1; offsetZ <= 0; offsetZ++) {
+                    int posX = x + offsetX;
+                    int posY = y + offsetY;
+                    int posZ = z + offsetZ;
+                    if (this.world.isTranslucent(posX, posY, posZ) || this.world.isLightSource(posX, posY, posZ)) {
+                        totalLightLevel += getLightAt(posX, posY, posZ);
+                        totalBlocks++;
+                    } else if (offsetY == 0) {
+                        totalBlocks++;
+                    }
+                }
+            }
+        }
+        return totalLightLevel / totalBlocks;
+    }
+
+    @Override // net.labymod.core.client.render.schematic.lighting.legacy.LegacyLightEngine
+    public boolean isInProgress() {
+        return !this.lightUpdateQueue.isEmpty() || this.dirty;
+    }
+
+    @Override // net.labymod.core.client.render.schematic.lighting.legacy.LegacyLightEngine
+    public boolean isDirty() {
+        return this.dirty;
+    }
+
+    @Override // net.labymod.core.client.render.schematic.lighting.legacy.LegacyLightEngine
+    public byte[] getData() {
+        return this.light;
+    }
+
+    @Override // net.labymod.core.client.render.schematic.lighting.legacy.LegacyLightEngine
+    public void setData(byte[] data) {
+        if (data.length != this.light.length) {
+            throw new IllegalArgumentException("Light data has wrong length");
+        }
+        this.light = data;
+    }
+}
+
+==================================================
+FILE: java\net\labymod\core\client\render\schematic\lighting\legacy\LegacyLightEngine.java
+==================================================
+package net.labymod.core.client.render.schematic.lighting.legacy;
+
+import net.labymod.api.Laby;
+import net.labymod.api.configuration.loader.property.ConfigProperty;
+
+/* JADX INFO: loaded from: LabyMod-4.jar:net/labymod/core/client/render/schematic/lighting/legacy/LegacyLightEngine.class */
+public interface LegacyLightEngine {
+    public static final ConfigProperty<Float> brightnessSetting = Laby.labyAPI().config().appearance().dynamicBackground().brightness();
+
+    int getLightAt(int i, int i2, int i3);
+
+    void handleLightUpdates();
+
+    boolean isInProgress();
+
+    boolean isDirty();
+
+    void reset();
+
+    float getAverageLightLevelAt(int i, int i2, int i3);
+
+    byte[] getData();
+
+    void setData(byte[] bArr);
+
+    default boolean isFullyCalculated() {
+        return (isInProgress() || isDirty()) ? false : true;
+    }
+
+    default float getRedStrengthAt(int x, int y, int z) {
+        return getStrengthAt(x, y, z);
+    }
+
+    default float getGreenStrengthAt(int x, int y, int z) {
+        return getStrengthAt(x, y, z);
+    }
+
+    default float getBlueStrengthAt(int x, int y, int z) {
+        return getStrengthAt(x, y, z);
+    }
+
+    default float getStrengthAt(int x, int y, int z) {
+        return getStrengthFrom(getAverageLightLevelAt(x, y, z));
+    }
+
+    default float getStrengthFrom(float level) {
+        return applyBrightness((0.06f * level) + 0.1f);
+    }
+
+    default float applyBrightness(float value) {
+        return Math.min(value * brightnessSetting.get().floatValue(), 1.0f);
+    }
+}
+
+==================================================
+FILE: java\net\labymod\core\client\render\schematic\block\material\material\TorchMaterial.java
+==================================================
+package net.labymod.core.client.render.schematic.block.material.material;
+
+import net.labymod.api.client.gfx.pipeline.texture.atlas.TextureAtlas;
+import net.labymod.api.client.gfx.pipeline.texture.atlas.TextureUV;
+import net.labymod.core.client.render.schematic.SchematicAccessor;
+import net.labymod.core.client.render.schematic.block.Block;
+import net.labymod.core.client.render.schematic.block.Face;
+import net.labymod.core.client.render.schematic.block.ParameterType;
+import net.labymod.core.client.render.schematic.block.material.BoundingBox;
+import net.labymod.core.client.render.schematic.block.material.RenderLayer;
+import net.labymod.core.client.render.schematic.lighting.LightSource;
+import net.labymod.core.client.render.schematic.lighting.PointLightSource;
+import net.labymod.core.client.render.schematic.particle.ParticleRenderer;
+import net.labymod.core.client.render.schematic.particle.particle.FlameParticle;
+import net.labymod.core.client.render.schematic.particle.particle.SmokeParticle;
+
+/* JADX INFO: loaded from: LabyMod-4.jar:net/labymod/core/client/render/schematic/block/material/material/TorchMaterial.class */
+public class TorchMaterial extends Material {
+    private final Type type;
+
+    public TorchMaterial(String id, Type type) {
+        super(id);
+        this.type = type;
+        this.resourceLocation = createResource(type.getBlockResourceName());
+    }
+
+    @Override // net.labymod.core.client.render.schematic.block.material.material.Material
+    public int getLight(Block block) {
+        return 15;
+    }
+
+    @Override // net.labymod.core.client.render.schematic.block.material.material.Material
+    public int getLightColor(Block block) {
+        return this.type.getColor();
+    }
+
+    @Override // net.labymod.core.client.render.schematic.block.material.material.Material
+    public boolean isFullBlock() {
+        return false;
+    }
+
+    @Override // net.labymod.core.client.render.schematic.block.material.material.Material
+    public BoundingBox getBoundingBox(SchematicAccessor level, int x, int y, int z, Block block) {
+        this.boundingBox.setCorner(4, 0.5f - 0.0625f, 0.625f, 0.5f - 0.0625f);
+        this.boundingBox.setCorner(5, 0.5f - 0.0625f, 0.625f, 0.5f + 0.0625f);
+        this.boundingBox.setCorner(6, 0.5f + 0.0625f, 0.625f, 0.5f - 0.0625f);
+        this.boundingBox.setCorner(7, 0.5f + 0.0625f, 0.625f, 0.5f + 0.0625f);
+        this.boundingBox.setCorner(0, 0.5f - 0.0625f, 0.0f, 0.5f - 0.0625f);
+        this.boundingBox.setCorner(1, 0.5f - 0.0625f, 0.0f, 0.5f + 0.0625f);
+        this.boundingBox.setCorner(2, 0.5f + 0.0625f, 0.0f, 0.5f - 0.0625f);
+        this.boundingBox.setCorner(3, 0.5f + 0.0625f, 0.0f, 0.5f + 0.0625f);
+        String facing = (String) block.getParameter(ParameterType.FACING, "none");
+        boolean south = facing.equals(ParameterType.SOUTH);
+        if (facing.equals(ParameterType.NORTH) || south) {
+            this.boundingBox.rotateX(0.5f, 1.0f, 0.5f + (0.1f * (south ? -1 : 1)), 30 * (south ? 1 : -1));
+        } else {
+            boolean west = facing.equals(ParameterType.WEST);
+            this.boundingBox.rotateZ(0.5f + (0.1f * (west ? 1 : -1)), 1.0f, 0.5f, 30 * (west ? 1 : -1));
+        }
+        return super.getBoundingBox(level, x, y, z, block);
+    }
+
+    @Override // net.labymod.core.client.render.schematic.block.material.material.Material
+    public LightSource createLightSource(int x, int y, int z, Block block) {
+        float centerX = x + 0.5f;
+        float centerY = y + 0.75f;
+        float centerZ = z + 0.5f;
+        int color = getLightColor(block);
+        PointLightSource lightSource = new PointLightSource();
+        lightSource.getColor().set(((color >> 16) & 255) / 255.0f, ((color >> 8) & 255) / 255.0f, (color & 255) / 255.0f);
+        lightSource.getPosition().set(centerX, centerY, centerZ);
+        lightSource.setConstant(0.12f);
+        lightSource.setQuadratic(0.256f);
+        lightSource.setLinear(0.2f);
+        return lightSource;
+    }
+
+    @Override // net.labymod.core.client.render.schematic.block.material.material.Material
+    public TextureUV getUV(SchematicAccessor level, int x, int y, int z, TextureAtlas atlas, Block block, Face face) {
+        return getUVCut(atlas, this.resourceLocation, 7, face == Face.BOTTOM ? 14 : 6, 2, face.isYAxis() ? 2 : 10);
+    }
+
+    @Override // net.labymod.core.client.render.schematic.block.material.material.Material
+    public void randomDisplayTick(SchematicAccessor level, ParticleRenderer particleRenderer, Block block, int x, int y, int z) {
+        double centerX;
+        double centerZ;
+        double finalY;
+        centerX = x + 0.5f;
+        double centerY = y + 0.7f;
+        centerZ = z + 0.5f;
+        String facing = (String) block.getParameter(ParameterType.FACING, "none");
+        finalY = centerY + 0.0d;
+        switch (facing) {
+            case "east":
+                double eastX = centerX - 0.2d;
+                particleRenderer.spawnParticle(new SmokeParticle(level, eastX, finalY, centerZ));
+                particleRenderer.spawnParticle(new FlameParticle(level, eastX, finalY, centerZ, this.type));
+                break;
+            case "west":
+                double westX = centerX + 0.2d;
+                particleRenderer.spawnParticle(new SmokeParticle(level, westX, finalY, centerZ));
+                particleRenderer.spawnParticle(new FlameParticle(level, westX, finalY, centerZ, this.type));
+                break;
+            case "south":
+                double southZ = centerZ - 0.2d;
+                particleRenderer.spawnParticle(new SmokeParticle(level, centerX, finalY, southZ));
+                particleRenderer.spawnParticle(new FlameParticle(level, centerX, finalY, southZ, this.type));
+                break;
+            case "north":
+                double northZ = centerZ + 0.2d;
+                particleRenderer.spawnParticle(new SmokeParticle(level, centerX, finalY, northZ));
+                particleRenderer.spawnParticle(new FlameParticle(level, centerX, finalY, northZ, this.type));
+                break;
+            case "none":
+                particleRenderer.spawnParticle(new SmokeParticle(level, centerX, finalY, centerZ));
+                particleRenderer.spawnParticle(new FlameParticle(level, centerX, finalY, centerZ, this.type));
+                break;
+        }
+    }
+
+    @Override // net.labymod.core.client.render.schematic.block.material.material.Material
+    public RenderLayer getRenderLayer() {
+        return RenderLayer.CUBE;
+    }
+
+    /* JADX INFO: loaded from: LabyMod-4.jar:net/labymod/core/client/render/schematic/block/material/material/TorchMaterial$Type.class */
+    public enum Type {
+        DEFAULT("torch", "flame", 13395456),
+        SOUL("soul_torch", "soul_fire_flame", 677541);
+
+        private final String blockResourceName;
+        private final String particleResourceName;
+        private final int color;
+
+        Type(String blockResourceName, String particleResourceName, int color) {
+            this.blockResourceName = blockResourceName;
+            this.particleResourceName = particleResourceName;
+            this.color = color;
+        }
+
+        public String getBlockResourceName() {
+            return this.blockResourceName;
+        }
+
+        public String getParticleResourceName() {
+            return this.particleResourceName;
+        }
+
+        public int getColor() {
+            return this.color;
+        }
+    }
+}
+
+==================================================
+FILE: java\net\labymod\core\client\render\schematic\block\material\material\LavaMaterial.java
+==================================================
+package net.labymod.core.client.render.schematic.block.material.material;
+
+/* JADX INFO: loaded from: LabyMod-4.jar:net/labymod/core/client/render/schematic/block/material/material/LavaMaterial.class */
+public class LavaMaterial extends LiquidMaterial {
+    public LavaMaterial() {
+        super("lava");
+    }
+}
+
+==================================================
+FILE: java\net\labymod\core\client\render\schematic\block\material\material\GlowstoneMaterial.java
+==================================================
+package net.labymod.core.client.render.schematic.block.material.material;
+
+import net.labymod.api.util.color.format.ColorFormat;
+import net.labymod.core.client.render.schematic.block.Block;
+import net.labymod.core.client.render.schematic.lighting.LightSource;
+import net.labymod.core.client.render.schematic.lighting.PointLightSource;
+
+/* JADX INFO: loaded from: LabyMod-4.jar:net/labymod/core/client/render/schematic/block/material/material/GlowstoneMaterial.class */
+public class GlowstoneMaterial extends SolidMaterial {
+    public GlowstoneMaterial() {
+        super("glowstone");
+    }
+
+    @Override // net.labymod.core.client.render.schematic.block.material.material.Material
+    public int getLight(Block block) {
+        return 15;
+    }
+
+    @Override // net.labymod.core.client.render.schematic.block.material.material.Material
+    public int getLightColor(Block block) {
+        return ColorFormat.ARGB32.pack(1.0f, 1.0f, 1.0f, 1.0f);
+    }
+
+    @Override // net.labymod.core.client.render.schematic.block.material.material.Material
+    public LightSource createLightSource(int x, int y, int z, Block block) {
+        PointLightSource lightSource = new PointLightSource();
+        lightSource.getPosition().set(x + 0.5f, y + 0.5f, z + 0.5f);
+        lightSource.getColor().set(1.0f, 1.0f, 1.0f);
+        lightSource.setQuadratic(0.0075f);
+        lightSource.setLinear(0.045f);
+        lightSource.setConstant(1.0f);
+        return lightSource;
+    }
+}

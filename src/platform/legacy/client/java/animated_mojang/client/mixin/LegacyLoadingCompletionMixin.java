@@ -15,6 +15,10 @@ public final class LegacyLoadingCompletionMixin {
 			target = "Lnet/minecraft/client/Minecraft;setOverlay(Lnet/minecraft/client/gui/screens/Overlay;)V"),
 			require = 0)
 	private void animatedMojang$finishAfterAnimation(Minecraft minecraft, Overlay overlay) {
+		if (((LegacyLoadingOverlayAccessor) (Object) this).animatedMojang$getFadeIn()) {
+			minecraft.setOverlay(overlay);
+			return;
+		}
 		if (overlay == null && AnimatedMojangConfig.isMojangLogoAnimationEnabled()) {
 			if (!LegacyAnimations.hasLoadingAnimationStarted()) {
 				return;
