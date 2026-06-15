@@ -54,6 +54,9 @@ public final class LegacyAnimations {
 			ModMetadata.MOD_ID, "textures/gui/studios.png");
 	private static final Object MINECRAFT_EDITION = LegacyRenderBridge.location(
 			"minecraft", "textures/gui/title/edition.png");
+	private static final Object CAVE_PARTICLES = LegacyRenderBridge.location(
+			ModMetadata.MOD_ID, "textures/gui/title/cave_particles_clean.png");
+	private static final int PARTICLE_ATLAS_SIZE = 128;
 	private static final Object[] TITLE_TEXTURES = new Object[9];
 	private static long titleStartedAt = -1L;
 	private static long loadingStartedAt = -1L;
@@ -187,25 +190,7 @@ public final class LegacyAnimations {
 		if (LegacyIdentifierBridge.renderScene(graphics, screenName, progress)) {
 			return;
 		}
-		int top = blend(0xFF08070B, 0xFF191620, progress);
-		int bottom = blend(0xFF17131A, 0xFF3B2920, progress);
-		graphics.fillGradient(0, 0, graphics.guiWidth(), graphics.guiHeight(), top, bottom);
-
-		int width = graphics.guiWidth();
-		int height = graphics.guiHeight();
-		int cameraOffset = cameraOffset(screenName, width);
-		int horizon = Math.round(height * 0.58F);
-		graphics.fill(0, horizon, width, height, 0xFF100E12);
-		graphics.fill(cameraOffset - width / 3, height / 5, cameraOffset + width / 5, horizon, 0xFF1A171D);
-		graphics.fill(cameraOffset + width / 4, height / 4, cameraOffset + width * 3 / 4, horizon, 0xFF242027);
-		graphics.fill(0, horizon - height / 12, width / 4, height, 0xFF302A2D);
-		graphics.fill(width * 3 / 4, horizon - height / 10, width, height, 0xFF332B2C);
-
-		int lavaPulse = 190 + Math.round((float) Math.sin(elapsed / 180.0F) * 35.0F);
-		int lava = 0xFF000000 | 255 << 16 | AnimationMath.clamp(lavaPulse, 110, 245) << 8 | 18;
-		graphics.fill(cameraOffset + width / 12, horizon + height / 9,
-				cameraOffset + width / 3, horizon + height / 7, lava);
-		renderParticles(graphics, elapsed, cameraOffset);
+		LegacySchematicScene.get().render(graphics, screenName, progress, elapsed);
 	}
 
 	public static void renderScreenEffects(GuiGraphics graphics) {
@@ -217,7 +202,7 @@ public final class LegacyAnimations {
 	}
 
 	public static void renderTitle(GuiGraphics graphics) {
-		renderTitle(graphics, OpeningTimeline.menuFade(titleElapsed()));
+		renderTitle(graphics, 1.0F);
 	}
 
 	public static void renderTitle(GuiGraphics graphics, float alpha) {
@@ -241,7 +226,7 @@ public final class LegacyAnimations {
 				row * (float) TITLE_SOURCE_FRAME_HEIGHT, width, height, TITLE_SOURCE_WIDTH,
 				TITLE_SOURCE_FRAME_HEIGHT, TITLE_SOURCE_WIDTH, TITLE_SOURCE_TEXTURE_HEIGHT, color);
 		if (OpeningTimeline.shouldRevealMenu(titleElapsed())) {
-			renderEdition(graphics, logoScale, alpha);
+			renderEdition(graphics, logoScale, alpha * OpeningTimeline.menuFade(titleElapsed()));
 		}
 	}
 
@@ -266,25 +251,4 @@ public final class LegacyAnimations {
 		return 0xFF000000 | red << 16 | green << 8 | blue;
 	}
 
-	private static int cameraOffset(String screenName, int width) {
-		if (screenName.contains("World")) return -width / 12;
-		if (screenName.contains("Multiplayer")) return width / 14;
-		if (screenName.contains("Options") || screenName.contains("Pack")) return width / 9;
-		if (screenName.contains("Connect") || screenName.contains("Disconnected")) return -width / 6;
-		return 0;
-	}
-
-	private static void renderParticles(GuiGraphics graphics, long elapsed, int cameraOffset) {
-		int width = graphics.guiWidth();
-		int height = graphics.guiHeight();
-		for (int index = 0; index < 18; index++) {
-			long seed = index * 341873128712L;
-			int x = Math.floorMod((int) (seed + elapsed / (18 + index % 5)), width + 80) - 40 + cameraOffset / 5;
-			int y = height - Math.floorMod((int) (seed / 31 + elapsed / (10 + index % 4)), height + 60);
-			int size = 1 + index % 3;
-			int alpha = 90 + index % 4 * 28;
-			int color = alpha << 24 | (index % 5 == 0 ? 0xFF8A32 : 0xB9A9A1);
-			graphics.fill(x, y, x + size, y + size, color);
-		}
-	}
 }

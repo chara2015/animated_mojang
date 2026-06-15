@@ -36,7 +36,8 @@ public final class LegacyTitleScreenMixin {
 	}
 
 	@Redirect(method = "render", at = @At(value = "INVOKE",
-			target = "Lnet/minecraft/client/gui/screens/TitleScreen;renderPanorama(Lnet/minecraft/client/gui/GuiGraphics;F)V"))
+			target = "Lnet/minecraft/client/gui/screens/TitleScreen;renderPanorama(Lnet/minecraft/client/gui/GuiGraphics;F)V"),
+			require = 0)
 	private void animatedMojang$replaceVanillaPanorama(TitleScreen screen, GuiGraphics graphics, float delta) {
 		LegacyAnimations.renderTitleBackground(graphics);
 	}
@@ -47,7 +48,7 @@ public final class LegacyTitleScreenMixin {
 	private void animatedMojang$replaceVanillaTitleLogo(LogoRenderer renderer, GuiGraphics graphics,
 			int screenWidth, float alpha) {
 		if (AnimatedMojangConfig.isMinecraftTitleAnimationEnabled()) {
-			LegacyAnimations.renderTitle(graphics, alpha);
+			LegacyAnimations.renderTitle(graphics, 1.0F);
 		} else {
 			renderer.renderLogo(graphics, screenWidth, alpha);
 		}

@@ -60,6 +60,7 @@ final class SchematicScene {
 	private static final int TILE_SIZE = 16;
 	private static final int PARTICLE_ATLAS_SIZE = 128;
 	private static final int PARTICLE_FLAME_U = 0;
+	private static final int PARTICLE_FLAME_V = 24;
 	private static final int PARTICLE_SOUL_FLAME_V = 32;
 	private static final int PARTICLE_FLAME_SIZE = 8;
 	private static final int PARTICLE_SMOKE_U = 0;
@@ -71,7 +72,10 @@ final class SchematicScene {
 	private static final int LAVA_FRAMES = 32;
 	private static final int CAMERA_BUCKETS = 48;
 	private static final int LAVA_UPDATE_TICKS = 8;
-	private static final int PARTICLE_RANDOM_TICKS = 30000;
+	private static final int TORCH_PARTICLE_INTERVAL = 5;
+	private static final int FURNACE_PARTICLE_INTERVAL = 8;
+	private static final float PARTICLE_WORLD_SCALE = 0.1F;
+	private static final float PARTICLE_PROJECTION_SCALE = 1.0F / (2.0F * (float) Math.tan(25.0F * Mth.DEG_TO_RAD));
 	private static final float LABY_BRIGHTNESS = 2.0F;
 	private static final float LABY_RESOLUTION = 5.0F;
 	private static final int MAX_SHADER_LIGHTS = 48;
@@ -252,7 +256,8 @@ final class SchematicScene {
 		Matrix4f viewProjection = new Matrix4f().perspective(50.0F * Mth.DEG_TO_RAD, aspect, 0.05F, 1024.0F)
 				.mul(pose.viewMatrix);
 		for (CaveParticle particle : particles) {
-			if (occludedByBlock(pose, particle.renderX(), particle.renderY(), particle.renderZ())) {
+			if (occludedByBlock(pose, particle.renderX(), particle.renderY(), particle.renderZ(),
+					particle.sourceX, particle.sourceY, particle.sourceZ)) {
 				continue;
 			}
 			ProjectedPoint point = project(viewProjection, particle.renderX(), particle.renderY(), particle.renderZ(),
@@ -265,23 +270,30 @@ final class SchematicScene {
 			if (x < -20 || y < -20 || x > screenWidth + 20 || y > screenHeight + 20) {
 				continue;
 			}
-			float distanceScale = Mth.clamp(42.0F / point.depth, 0.55F, 2.2F);
 			float progress = particle.progress();
 			float sizeScale = particle.size * (1.0F - progress * progress * 0.5F);
-			int size = Math.max(2, Math.round(screenHeight / 260.0F * distanceScale * sizeScale));
+			int size = Math.max(1, Math.round(screenHeight * PARTICLE_PROJECTION_SCALE
+					* PARTICLE_WORLD_SCALE * sizeScale / point.depth));
+			int textureU;
+			int textureV;
+			int textureSize;
+			int color;
 			if (particle.flame) {
-				graphics.blit(RenderPipelines.GUI_TEXTURED, PARTICLE_TEXTURE, x - size, y - size,
-						PARTICLE_FLAME_U, PARTICLE_SOUL_FLAME_V, size * 2, size * 2,
-						PARTICLE_FLAME_SIZE, PARTICLE_FLAME_SIZE, PARTICLE_ATLAS_SIZE, PARTICLE_ATLAS_SIZE,
-						packAlpha(0xFFFFFF, 1.0F - progress * 0.2F));
+				textureU = PARTICLE_FLAME_U;
+				textureV = particle.soulFlame ? PARTICLE_SOUL_FLAME_V : PARTICLE_FLAME_V;
+				textureSize = PARTICLE_FLAME_SIZE;
+				color = 0xFFFFFFFF;
 			} else {
 				int gray = Mth.clamp(particle.color, 0, 255);
 				int frame = particle.smokeFrame();
-				graphics.blit(RenderPipelines.GUI_TEXTURED, PARTICLE_TEXTURE, x - size, y - size,
-						PARTICLE_SMOKE_U + frame * PARTICLE_SMOKE_SIZE, PARTICLE_SMOKE_V, size * 2, size * 2,
-						PARTICLE_SMOKE_SIZE, PARTICLE_SMOKE_SIZE, PARTICLE_ATLAS_SIZE, PARTICLE_ATLAS_SIZE,
-						packAlpha(gray << 16 | gray << 8 | gray, 1.0F - progress));
+				textureU = PARTICLE_SMOKE_U + frame * PARTICLE_SMOKE_SIZE;
+				textureV = PARTICLE_SMOKE_V;
+				textureSize = PARTICLE_SMOKE_SIZE;
+				color = 0xFF000000 | gray << 16 | gray << 8 | gray;
 			}
+			graphics.blit(RenderPipelines.GUI_TEXTURED, PARTICLE_TEXTURE, x - size, y - size,
+					textureU, textureV, size * 2, size * 2, textureSize, textureSize,
+					PARTICLE_ATLAS_SIZE, PARTICLE_ATLAS_SIZE, color);
 		}
 	}
 
@@ -299,7 +311,7 @@ final class SchematicScene {
 					particles.remove(p--);
 				}
 			}
-			randomDisplayTick(pose);
+			displayTick(pose, lastParticleTick + i + 1);
 		}
 		lastParticleTick = currentTick;
 	}
@@ -309,46 +321,40 @@ final class SchematicScene {
 			double dx = torch.x + 0.5D - pose.x;
 			double dy = torch.y + 0.7D - pose.y;
 			double dz = torch.z + 0.5D - pose.z;
-			if (dx * dx + dy * dy + dz * dz <= 72.0D * 72.0D) {
-				spawnTorchParticles(torch.x, torch.y, torch.z, torch.facing);
+			if (!torch.furnace && dx * dx + dy * dy + dz * dz <= 72.0D * 72.0D) {
+				spawnDisplayParticles(torch);
 			}
 		}
 	}
 
-	private void randomDisplayTick(CameraPose pose) {
-		spawnParsedTorchParticles(pose);
-		int cameraX = Mth.floor(pose.x);
-		int cameraY = Mth.floor(pose.y);
-		int cameraZ = Mth.floor(pose.z);
-		for (int i = 0; i < PARTICLE_RANDOM_TICKS; i++) {
-			int x = cameraX + particleRandom.nextInt(64) - particleRandom.nextInt(64);
-			int y = cameraY + particleRandom.nextInt(5) - particleRandom.nextInt(5);
-			int z = cameraZ + particleRandom.nextInt(64) - particleRandom.nextInt(64);
-			if (x < 0 || y < 0 || z < 0 || x >= width || y >= height || z >= length) {
+	private void displayTick(CameraPose pose, int currentTick) {
+		for (TorchSample sample : torchSamples) {
+			double dx = sample.x + 0.5D - pose.x;
+			double dy = sample.y + 0.7D - pose.y;
+			double dz = sample.z + 0.5D - pose.z;
+			if (dx * dx + dy * dy + dz * dz > 72.0D * 72.0D) {
 				continue;
 			}
-			String state = blockStates[index(width, length, x, y, z)];
-			if (state != null && state.contains("torch")) {
-				spawnTorchParticles(x, y, z, parameter(state, "facing", "none"));
+			int interval = sample.furnace ? FURNACE_PARTICLE_INTERVAL : TORCH_PARTICLE_INTERVAL;
+			if (Math.floorMod(currentTick + sample.hash, interval) == 0) {
+				spawnDisplayParticles(sample);
 			}
-		}
-		if (particles.size() > 768) {
-			particles.subList(0, particles.size() - 768).clear();
 		}
 	}
 
-	private void spawnParsedTorchParticles(CameraPose pose) {
-		for (TorchSample torch : torchSamples) {
-			double dx = torch.x + 0.5D - pose.x;
-			double dy = torch.y + 0.7D - pose.y;
-			double dz = torch.z + 0.5D - pose.z;
-			if (dx * dx + dy * dy + dz * dz <= 72.0D * 72.0D && particleRandom.nextInt(8) == 0) {
-				spawnTorchParticles(torch.x, torch.y, torch.z, torch.facing);
-			}
+	private void spawnDisplayParticles(TorchSample sample) {
+		if (sample.furnace) {
+			spawnFurnaceParticles(sample.x, sample.y, sample.z, sample.facing);
+		} else {
+			spawnTorchParticles(sample.x, sample.y, sample.z, sample.facing, sample.soul);
 		}
 	}
 
 	private void spawnTorchParticles(int x, int y, int z, String facing) {
+		spawnTorchParticles(x, y, z, facing, false);
+	}
+
+	private void spawnTorchParticles(int x, int y, int z, String facing, boolean soul) {
 		double centerX = x + 0.5D;
 		double centerY = y + 0.7D;
 		double centerZ = z + 0.5D;
@@ -361,11 +367,35 @@ final class SchematicScene {
 		} else if ("north".equals(facing)) {
 			centerZ += 0.2D;
 		}
-		particles.add(CaveParticle.smoke(centerX, centerY, centerZ, particleRandom));
-		particles.add(CaveParticle.flame(centerX, centerY, centerZ, particleRandom));
+		particles.add(CaveParticle.smoke(centerX, centerY, centerZ, x, y, z, particleRandom));
+		particles.add(CaveParticle.flame(centerX, centerY, centerZ, x, y, z, soul, particleRandom));
 	}
 
-	private boolean occludedByBlock(CameraPose pose, double x, double y, double z) {
+	private void spawnFurnaceParticles(int x, int y, int z, String facing) {
+		double centerX = x + 0.5D;
+		double centerY = y + particleRandom.nextFloat() * 6.0F / 16.0F;
+		double centerZ = z + 0.5D;
+		double edgeOffset = particleRandom.nextFloat() * 0.6F - 0.3F;
+		switch (facing) {
+			case "east" -> centerX += 0.52D;
+			case "west" -> centerX -= 0.52D;
+			case "south" -> centerZ += 0.52D;
+			case "north" -> centerZ -= 0.52D;
+			default -> {
+				return;
+			}
+		}
+		if ("east".equals(facing) || "west".equals(facing)) {
+			centerZ += edgeOffset;
+		} else {
+			centerX += edgeOffset;
+		}
+		particles.add(CaveParticle.smoke(centerX, centerY, centerZ, x, y, z, particleRandom));
+		particles.add(CaveParticle.flame(centerX, centerY, centerZ, x, y, z, false, particleRandom));
+	}
+
+	private boolean occludedByBlock(CameraPose pose, double x, double y, double z,
+			int sourceX, int sourceY, int sourceZ) {
 		double dx = x - pose.x;
 		double dy = y - pose.y;
 		double dz = z - pose.z;
@@ -373,7 +403,7 @@ final class SchematicScene {
 		if (distance <= 0.25D) {
 			return false;
 		}
-		int steps = Math.max(1, (int) (distance * 8.0D));
+		int steps = Math.max(1, (int) (distance * 16.0D));
 		for (int i = 1; i < steps; i++) {
 			double t = i / (double) steps;
 			double sampleX = pose.x + dx * t;
@@ -382,12 +412,39 @@ final class SchematicScene {
 			int blockX = Mth.floor(sampleX);
 			int blockY = Mth.floor(sampleY);
 			int blockZ = Mth.floor(sampleZ);
+			if (blockX == sourceX && blockY == sourceY && blockZ == sourceZ) {
+				continue;
+			}
 			String state = blockStateAt(blockStates, width, height, length, blockX, blockY, blockZ);
-			if (state != null && (isFullBlockLikeLaby(state) || state.contains("cobweb"))) {
+			if (occludesParticle(state, sampleX - blockX, sampleY - blockY, sampleZ - blockZ)) {
 				return true;
 			}
 		}
 		return false;
+	}
+
+	private static boolean occludesParticle(String state, double x, double y, double z) {
+		if (isFullBlockLikeLaby(state)) {
+			return true;
+		}
+		if (state == null) {
+			return false;
+		}
+		if (state.contains("cobweb")) {
+			return Math.abs(x - z) < 0.055D || Math.abs(x + z - 1.0D) < 0.055D;
+		}
+		if (!isFence(state)) {
+			return false;
+		}
+		boolean post = x >= 0.375D && x <= 0.625D && z >= 0.375D && z <= 0.625D;
+		boolean railY = y >= 0.375D && y <= 0.5625D || y >= 0.75D && y <= 0.9375D;
+		boolean northSouth = railY && x >= 0.4375D && x <= 0.5625D
+				&& (z <= 0.5D && "true".equals(parameter(state, "north", "false"))
+				|| z >= 0.5D && "true".equals(parameter(state, "south", "false")));
+		boolean eastWest = railY && z >= 0.4375D && z <= 0.5625D
+				&& (x <= 0.5D && "true".equals(parameter(state, "west", "false"))
+				|| x >= 0.5D && "true".equals(parameter(state, "east", "false")));
+		return post || northSouth || eastWest;
 	}
 
 	private static void closeMesh(LayerMesh mesh) {
@@ -1251,8 +1308,10 @@ final class SchematicScene {
 					}
 					float light = Math.max(blockLights[index], lightFor(state));
 					if (isCrossPlane(state)) {
+						int firstFace = faces.size();
 						addCrossPlaneFaces(faces, blockStates, width, height, length, blockLights, blockRedLights,
 								blockGreenLights, blockBlueLights, lightPoints, x, y, z, state, light);
+						addBackFaces(faces, firstFace);
 						continue;
 					}
 					addFaceIfExposed(faces, blockStates, width, height, length, blockLights, blockRedLights, blockGreenLights,
@@ -1271,6 +1330,16 @@ final class SchematicScene {
 			}
 		}
 		return faces;
+	}
+
+	private static void addBackFaces(List<MeshFace> faces, int firstFace) {
+		int end = faces.size();
+		for (int index = firstFace; index < end; index++) {
+			MeshFace face = faces.get(index);
+			faces.add(new MeshFace(reverse(face.xs), reverse(face.ys), reverse(face.zs), reverse(face.us), reverse(face.vs),
+					-face.normalX, -face.normalY, -face.normalZ, face.state, face.light, reverse(face.redLights),
+					reverse(face.greenLights), reverse(face.blueLights), face.directionShade, face.lava, face.lavaStillTop));
+		}
 	}
 
 	private static float legacyStrengthAt(String[] blockStates, float[] light, int width, int height, int length,
@@ -1353,7 +1422,10 @@ final class SchematicScene {
 					String state = blockStates[index(width, length, x, y, z)];
 					if (state != null && state.contains("torch")) {
 						torches.add(new TorchSample(x, y, z, parameter(state, "facing", "up"),
-								sampleHash(x * 31 + z, y * 17 + 73)));
+								sampleHash(x * 31 + z, y * 17 + 73), false, state.contains("soul_")));
+					} else if (state != null && state.contains("furnace") && state.contains("lit=true")) {
+						torches.add(new TorchSample(x, y, z, parameter(state, "facing", "none"),
+								sampleHash(x * 31 + z, y * 17 + 73), true, false));
 					}
 				}
 			}
@@ -1788,7 +1860,7 @@ final class SchematicScene {
 			maxV = minV + (maxV - minV) * 0.5F;
 		}
 		if (isFence(state)) {
-			float pixel = TILE_SIZE / (float) ATLAS_SIZE;
+			float pixel = 1.0F / ATLAS_SIZE;
 			minU += pixel * 6.0F;
 			maxU -= pixel * 6.0F;
 			if (normalY != 0) {
@@ -2236,7 +2308,7 @@ final class SchematicScene {
 		abstract float get(LightPoint light);
 	}
 
-	private record TorchSample(int x, int y, int z, String facing, int hash) {
+	private record TorchSample(int x, int y, int z, String facing, int hash, boolean furnace, boolean soul) {
 	}
 
 	private static final class CaveParticle {
@@ -2250,13 +2322,18 @@ final class SchematicScene {
 		private double motionY;
 		private double motionZ;
 		private final boolean flame;
+		private final boolean soulFlame;
 		private final int color;
 		private final float size;
 		private final int maxTicks;
+		private final int sourceX;
+		private final int sourceY;
+		private final int sourceZ;
 		private int ticks;
 
-		private CaveParticle(double x, double y, double z, double motionScale, boolean flame, int color, float size,
-				int maxTicks, Random random) {
+		private CaveParticle(double x, double y, double z, double motionScale, double verticalBoost,
+				boolean flame, boolean soulFlame, int color, float size,
+				int maxTicks, int sourceX, int sourceY, int sourceZ, Random random) {
 			this.x = x;
 			this.y = y;
 			this.z = z;
@@ -2264,30 +2341,37 @@ final class SchematicScene {
 			this.prevY = y;
 			this.prevZ = z;
 			this.flame = flame;
+			this.soulFlame = soulFlame;
 			this.color = color;
 			this.size = size;
 			this.maxTicks = Math.max(1, maxTicks);
+			this.sourceX = sourceX;
+			this.sourceY = sourceY;
+			this.sourceZ = sourceZ;
 			double randomX = (random.nextDouble() * 2.0D - 1.0D) * 0.4D;
 			double randomY = (random.nextDouble() * 2.0D - 1.0D) * 0.4D;
 			double randomZ = (random.nextDouble() * 2.0D - 1.0D) * 0.4D;
 			double strength = (random.nextDouble() + random.nextDouble() + 1.0D) * 0.15000000596046448D;
 			double length = Math.sqrt(randomX * randomX + randomY * randomY + randomZ * randomZ);
 			this.motionX = randomX / length * strength * motionScale;
-			this.motionY = randomY / length * strength * motionScale + (flame ? 0.0D : 0.1D);
+			this.motionY = randomY / length * strength * motionScale + verticalBoost;
 			this.motionZ = randomZ / length * strength * motionScale;
 		}
 
-		static CaveParticle flame(double x, double y, double z, Random random) {
+		static CaveParticle flame(double x, double y, double z, int sourceX, int sourceY, int sourceZ,
+				boolean soul, Random random) {
 			float size = (random.nextFloat() * 0.5F + 0.5F) * 2.0F;
 			int maxTicks = (int) (8.0D / (random.nextDouble() * 0.8D + 0.2D)) + 4;
-			return new CaveParticle(x, y, z, 0.00396D, true, 255, size, maxTicks, random);
+			return new CaveParticle(x, y, z, 0.00396D, 0.00099D, true, soul, 255, size, maxTicks,
+					sourceX, sourceY, sourceZ, random);
 		}
 
-		static CaveParticle smoke(double x, double y, double z, Random random) {
+		static CaveParticle smoke(double x, double y, double z, int sourceX, int sourceY, int sourceZ, Random random) {
 			float size = (random.nextFloat() * 0.5F + 0.5F) * 2.0F * 0.75F;
 			int brightness = (int) (random.nextDouble() * 76.5D);
 			int maxTicks = (int) (8.0D / (random.nextDouble() * 0.8D + 0.2D));
-			CaveParticle particle = new CaveParticle(x, y, z, 0.04D, false, brightness, size, maxTicks, random);
+			CaveParticle particle = new CaveParticle(x, y, z, 0.04D, 0.01D, false, false, brightness, size, maxTicks,
+					sourceX, sourceY, sourceZ, random);
 			particle.tick();
 			return particle;
 		}
@@ -2325,7 +2409,7 @@ final class SchematicScene {
 
 		int smokeFrame() {
 			float progress = Mth.clamp(ticks / (float) maxTicks, 0.0F, 1.0F);
-			return Mth.clamp(PARTICLE_SMOKE_FRAMES - (int) (progress * PARTICLE_SMOKE_FRAMES) - 1,
+			return Mth.clamp(PARTICLE_SMOKE_FRAMES - (int) (progress * (PARTICLE_SMOKE_FRAMES - 1)) - 1,
 					0, PARTICLE_SMOKE_FRAMES - 1);
 		}
 

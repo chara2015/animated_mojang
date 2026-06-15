@@ -79,6 +79,8 @@ if (!isMinecraft26Plus) {
 		resources.setSrcDirs(listOf(rootProject.file("src/platform/legacy/client/resources")))
 		if (minecraftVersion != "1.20") {
 			java.exclude("animated_mojang/client/mixin/LegacyScreen120Mixin.java")
+		} else {
+			java.exclude("animated_mojang/client/mixin/LegacyScreenMixin.java")
 		}
 	}
 	sourceSets.main {
@@ -122,6 +124,7 @@ tasks.withType<ProcessResources>().configureEach {
 	inputs.property("version", version)
 	inputs.property("javaCompatibilityLevel", javaCompatibilityLevel)
 	inputs.property("legacyScreen120Mixin", minecraftVersion == "1.20")
+	inputs.property("legacyScreenMixin", minecraftVersion != "1.20")
 	inputs.property("versionGuiAccessorMixin", minecraftVersion == "1.21.11")
 	inputs.property("versionGameRendererMixin", minecraftVersion == "1.21.11")
 	inputs.property("versionScreenEffectsMixin", minecraftVersion == "1.21.11")
@@ -155,6 +158,7 @@ tasks.withType<ProcessResources>().configureEach {
 		expand(
 			"java_compatibility_level" to javaCompatibilityLevel,
 			"legacy_screen_120_mixin" to if (minecraftVersion == "1.20") "\"LegacyScreen120Mixin\"," else "",
+			"legacy_screen_mixin" to if (minecraftVersion != "1.20") "\"LegacyScreenMixin\"," else "",
 			"version_gui_accessor_mixin" to if (minecraftVersion == "1.21.11") "\"GuiGraphicsAccessor\"," else "",
 			"version_game_renderer_mixin" to if (minecraftVersion == "1.21.11") "\"VersionedGameRendererMixin\"," else "",
 			"version_screen_effects_mixin" to if (minecraftVersion == "1.21.11") "\"VersionedScreenEffectsMixin\"," else "",

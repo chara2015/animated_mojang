@@ -21,4 +21,14 @@ public abstract class LegacyScreen120Mixin {
 			ci.cancel();
 		}
 	}
+
+	@Inject(method = "render", at = @At("TAIL"), require = 0)
+	private void animatedMojang$renderLegacy120DynamicEffects(GuiGraphics graphics, int mouseX, int mouseY,
+			float delta, CallbackInfo ci) {
+		if (Minecraft.getInstance().level == null && DynamicBackgroundScreens.matches(this)
+				&& !getClass().getSimpleName().contains("Title")
+				&& !LegacyAnimations.hasVersionedScreenEffects()) {
+			LegacyAnimations.renderScreenEffects(graphics);
+		}
+	}
 }

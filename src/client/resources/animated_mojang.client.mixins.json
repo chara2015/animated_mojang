@@ -9,6 +9,7 @@
 		"GameRendererMixin",
 		"ScreenMixin",
 		"TitleScreenMixin",
+		"TitleScreenCompatOverlayMixin",
 		"TransitionScreenMixin"
 	],
 	"injectors": {

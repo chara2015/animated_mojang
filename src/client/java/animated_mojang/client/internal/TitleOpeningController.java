@@ -47,6 +47,7 @@ public final class TitleOpeningController {
 	private static final float[] SINGLEPLAYER_CAMERA = CameraProfiles.SINGLEPLAYER.toArray();
 	private static final float[] MULTIPLAYER_CAMERA = CameraProfiles.MULTIPLAYER.toArray();
 	private static final float[] OPTIONS_CAMERA = CameraProfiles.OPTIONS.toArray();
+	private static final float[] ACCOUNT_CAMERA = CameraProfiles.ACCOUNT.toArray();
 	private static final float[] DIRECT_CONNECT_CAMERA = CameraProfiles.DIRECT_CONNECT.toArray();
 	private static final float[] OPENER_START_CAMERA = CameraProfiles.OPENER_START.toArray();
 	private static final float[] OPENER_TRANSFER_CAMERA = CameraProfiles.OPENER_TRANSFER.toArray();
@@ -59,6 +60,7 @@ public final class TitleOpeningController {
 	private static long screenTransitionDuration = SCREEN_TRANSITION_MS;
 	private static long forcedTransitionDuration;
 	private static boolean connectionFlowActive;
+	private static boolean wasInWorld;
 
 	private TitleOpeningController() {
 	}
@@ -96,7 +98,12 @@ public final class TitleOpeningController {
 	public static boolean usesDynamicBackground(Screen screen) {
 		if (Minecraft.getInstance().level != null && !isTransitionScreen(screen)) {
 			connectionFlowActive = false;
+			wasInWorld = true;
 			return false;
+		}
+		if (wasInWorld) {
+			forcedTransitionDuration = 3000L;
+			wasInWorld = false;
 		}
 		updateConnectionFlow(screen);
 		if (connectionFlowActive) {
@@ -119,9 +126,16 @@ public final class TitleOpeningController {
 		}
 	}
 
+	public static void renderHiddenTitleOverlay(GuiGraphicsExtractor graphics) {
+		renderBackground(graphics);
+		renderAnimatedMinecraftTitle(graphics, 1.0F);
+		renderFadeCover(graphics);
+	}
+
 	public static void renderMinecraftEditionWithMenu(GuiGraphicsExtractor graphics, float alpha) {
 		if (openingPlayed && AnimatedMojangConfig.isMinecraftTitleAnimationEnabled() && !shouldHideTitleWidgets()) {
-			AnimatedMinecraftTitle.renderEdition(graphics, alpha);
+			AnimatedMinecraftTitle.renderEdition(graphics,
+					alpha * OpeningTimeline.menuFade(getOpeningElapsedMillis()));
 		}
 	}
 
@@ -210,6 +224,8 @@ public final class TitleOpeningController {
 		if (screen instanceof ManageServerScreen || screen instanceof DirectJoinServerScreen) return DIRECT_CONNECT_CAMERA;
 		if (screen instanceof ConnectScreen) return OPENER_START_CAMERA;
 		if (screen instanceof DisconnectedScreen) return OPENER_START_CAMERA;
+		if (DynamicBackgroundScreens.isAccountScreen(screen)) return ACCOUNT_CAMERA;
+		if (DynamicBackgroundScreens.isReplayScreen(screen)) return SINGLEPLAYER_CAMERA;
 		if (isOptionsScreen(screen)) return OPTIONS_CAMERA;
 		if (screen instanceof TitleScreen) return TITLE_CAMERA;
 		return transitionTargetCamera;

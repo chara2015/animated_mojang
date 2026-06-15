@@ -9,7 +9,8 @@
 		"MusicManagerMixin",
 		"GameRendererMixin",
 		"ScreenMixin",
-		"TitleScreenMixin"
+		"TitleScreenMixin",
+		"TitleScreenCompatOverlayMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

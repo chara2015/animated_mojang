@@ -6,7 +6,8 @@ public final class DynamicBackgroundScreens {
 			"Connect", "Disconnected", "Loading", "Progress", "Waiting",
 			"Message", "ReceivingLevel", "DownloadingTerrain", "Working",
 			"Warning", "Confirm", "Notice", "Safety", "Realms", "Mod", "Config",
-			"Create", "GameRules", "Experiments", "DataPack"
+			"Create", "GameRules", "Experiments", "DataPack", "Account", "Replay",
+			"AltManager", "AltScreen", "Switcher"
 	};
 
 	private DynamicBackgroundScreens() {
@@ -26,5 +27,17 @@ public final class DynamicBackgroundScreens {
 		String fullName = screenClass.getName();
 		return fullName.contains(".realms") || fullName.contains(".modmenu")
 				|| fullName.contains("ModMenu") || fullName.contains("ConfigScreen");
+	}
+
+	public static boolean isAccountScreen(Object screen) {
+		return className(screen).matches(".*(account|altmanager|altscreen|switcher).*");
+	}
+
+	public static boolean isReplayScreen(Object screen) {
+		return className(screen).contains("replay");
+	}
+
+	private static String className(Object screen) {
+		return screen == null ? "" : screen.getClass().getName().toLowerCase(java.util.Locale.ROOT);
 	}
 }

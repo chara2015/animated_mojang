@@ -12,7 +12,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Screen.class)
 public abstract class LegacyScreenMixin {
-	@Inject(method = "renderBackground", at = @At("HEAD"), cancellable = true, require = 0)
+	@Inject(method = "renderBackground(Lnet/minecraft/client/gui/GuiGraphics;IIF)V",
+			at = @At("HEAD"), cancellable = true, require = 0)
 	private void animatedMojang$renderLegacyDynamicBackground(GuiGraphics graphics, int mouseX, int mouseY,
 			float delta, CallbackInfo ci) {
 		String name = getClass().getSimpleName();
