@@ -129,9 +129,6 @@ public final class VersionedTitleBackgroundController {
 			if (forcedTransitionDuration > 0L) {
 				forcedTransitionDuration = 0L;
 			}
-			if (targetDuration >= 1000L) {
-				forcedTransitionDuration = targetDuration;
-			}
 			returningFromWorld = false;
 			lastScreenClass = screen.getClass();
 		}

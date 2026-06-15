@@ -4,14 +4,26 @@ import animated_mojang.client.legacy.LegacyAnimations;
 import animated_mojang.common.DynamicBackgroundScreens;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.TitleScreen;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Screen.class)
 public abstract class LegacyScreenMixin {
+	@Inject(method = "addWidget", at = @At("RETURN"))
+	private void animatedMojang$initializeTitleWidgetAlpha(GuiEventListener widget,
+			CallbackInfoReturnable<GuiEventListener> cir) {
+		if ((Object) this instanceof TitleScreen && widget instanceof AbstractWidget abstractWidget) {
+			abstractWidget.setAlpha(LegacyAnimations.getTitleWidgetAlpha());
+		}
+	}
+
 	@Inject(method = "renderBackground(Lnet/minecraft/client/gui/GuiGraphics;IIF)V",
 			at = @At("HEAD"), cancellable = true, require = 0)
 	private void animatedMojang$renderLegacyDynamicBackground(GuiGraphics graphics, int mouseX, int mouseY,

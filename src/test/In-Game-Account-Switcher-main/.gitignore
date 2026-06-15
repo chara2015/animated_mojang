@@ -1,0 +1,17 @@
+.gradle/
+.idea/**
+build/
+dev/.env
+out/
+run/
+versions/
+!/.idea/codeStyles
+!/.idea/codeStyles/**
+!/.idea/copyright
+!/.idea/copyright/**
+!/.idea/dictionaries
+!/.idea/dictionaries/**
+!/.idea/encodings.xml
+!/.idea/icon.png
+!/.idea/inspectionProfiles
+!/.idea/inspectionProfiles/**

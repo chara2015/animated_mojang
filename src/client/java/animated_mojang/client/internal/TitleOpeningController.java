@@ -86,8 +86,19 @@ public final class TitleOpeningController {
 	}
 
 	public static boolean shouldHideThirdPartyTitleWidgets() {
+		return shouldHideTitleWidgets();
+	}
+
+	public static boolean shouldHidePostTitleOverlays() {
 		return AnimatedMojangConfig.isMinecraftTitleAnimationEnabled() && isOpeningPlaying()
 				&& getOpeningElapsedMillis() < MENU_REVEAL_MS + OpeningTimeline.MENU_FADE_MILLIS;
+	}
+
+	public static float getTitleWidgetAlpha() {
+		if (!AnimatedMojangConfig.isMinecraftTitleAnimationEnabled() || !isOpeningPlaying()) {
+			return 1.0F;
+		}
+		return OpeningTimeline.menuFade(getOpeningElapsedMillis());
 	}
 
 	public static boolean shouldRenderOpeningBackground() {
@@ -207,9 +218,6 @@ public final class TitleOpeningController {
 			smoothWorldReturnTransition = returningFromWorld;
 			if (forcedTransitionDuration > 0L) {
 				forcedTransitionDuration = 0L;
-			}
-			if (targetDuration >= 1000L) {
-				forcedTransitionDuration = targetDuration;
 			}
 			returningFromWorld = false;
 			lastScreenClass = screen.getClass();

@@ -3,6 +3,7 @@ package animated_mojang.client.mixin;
 import animated_mojang.client.legacy.LegacyAnimations;
 import animated_mojang.config.AnimatedMojangConfig;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.LogoRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.TitleScreen;
@@ -25,6 +26,12 @@ public final class LegacyTitleScreenMixin {
 	@Inject(method = "render", at = @At("HEAD"), cancellable = true)
 	private void animatedMojang$hideLegacyTitleWidgets(GuiGraphics graphics, int mouseX, int mouseY,
 			float delta, CallbackInfo ci) {
+		float widgetAlpha = LegacyAnimations.getTitleWidgetAlpha();
+		((TitleScreen) (Object) this).children().forEach(child -> {
+			if (child instanceof AbstractWidget widget) {
+				widget.setAlpha(widgetAlpha);
+			}
+		});
 		if (AnimatedMojangConfig.isMinecraftTitleAnimationEnabled() && LegacyAnimations.shouldHideTitleWidgets()) {
 			LegacyAnimations.renderTitleBackground(graphics);
 			LegacyAnimations.renderScreenEffects(graphics);

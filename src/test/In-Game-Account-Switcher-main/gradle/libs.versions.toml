@@ -1,0 +1,53 @@
+# In-Game Account Switcher is a third-party mod for Minecraft Java Edition that
+# allows you to change your logged in account in-game, without restarting it.
+#
+# Copyright (C) 2015-2022 The_Fireplace
+# Copyright (C) 2021-2026 VidTu
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>
+
+[versions]
+blossom = "2.2.0"
+error_prone_annotations = "2.25.0"
+fabric-loader = "0.19.3"
+fabric-loom = "1.17.11"
+forgegradle = "7.0.27"
+forgerenamer = "1.1.2"
+gson = "2.14.0"
+idea-ext = "1.4.1"
+jetbrains-annotations = "26.1.0"
+jspecify = "1.0.0"
+log4j = "2.26.0"
+mixin = "0.8.7"
+moddevgradle = "2.0.141"
+neogradle = "7.1.37"
+
+[plugins]
+blossom = { id = "net.kyori.blossom", version.ref = "blossom" }
+fabric-loom = { id = "net.fabricmc.fabric-loom", version.ref = "fabric-loom" }
+fabric-loom-remap = { id = "net.fabricmc.fabric-loom-remap", version.ref = "fabric-loom" }
+forgegradle = { id = "net.minecraftforge.gradle", version.ref = "forgegradle" }
+forgerenamer = { id = "net.minecraftforge.renamer", version.ref = "forgerenamer" }
+idea-ext = { id = "org.jetbrains.gradle.plugin.idea-ext", version.ref = "idea-ext" }
+moddevgradle-legacy = { id = "net.neoforged.moddev.legacyforge", version.ref = "moddevgradle" }
+neogradle = { id = "net.neoforged.gradle.userdev", version.ref = "neogradle" }
+
+[libraries]
+error_prone_annotations = { module = "com.google.errorprone:error_prone_annotations", version.ref = "error_prone_annotations" }
+fabric-loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric-loader" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+jetbrains-annotations = { module = "org.jetbrains:annotations", version.ref = "jetbrains-annotations" }
+jspecify = { module = "org.jspecify:jspecify", version.ref = "jspecify" }
+log4j = { module = "org.apache.logging.log4j:log4j-core", version.ref = "log4j" }
+mixin = { module = "org.spongepowered:mixin", version.ref = "mixin" }

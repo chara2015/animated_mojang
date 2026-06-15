@@ -9,6 +9,7 @@ import net.minecraft.client.gui.screens.TitleScreen;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -34,6 +35,12 @@ public class TitleScreenMixin {
 		} else if (TitleOpeningController.shouldRenderOpeningBackground()) {
 			TitleOpeningController.renderBackground(graphics);
 		}
+	}
+
+	@ModifyArg(method = "extractRenderState", at = @At(value = "INVOKE",
+			target = "Lnet/minecraft/client/gui/screens/TitleScreen;fadeWidgets(F)V"), index = 0, require = 0)
+	private float animatedMojang$useOpeningWidgetFade(float vanillaAlpha) {
+		return TitleOpeningController.getTitleWidgetAlpha();
 	}
 
 	@Redirect(method = "extractRenderState", at = @At(value = "INVOKE",

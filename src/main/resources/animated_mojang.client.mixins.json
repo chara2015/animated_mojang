@@ -8,6 +8,8 @@
 		"LoadingOverlayMixin",
 		"MusicManagerMixin",
 		"GameRendererMixin",
+		"InGameAccountSwitcherMixin",
+		"LabyModScreenOverlayMixin",
 		"ScreenMixin",
 		"TitleScreenMixin",
 		"TitleScreenCompatOverlayMixin"

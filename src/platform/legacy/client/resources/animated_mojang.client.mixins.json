@@ -5,6 +5,8 @@
 	"client": [
 		"LegacyLoadingOverlayAccessor",
 		"LegacyLoadingOverlayMixin",
+		"LegacyInGameAccountSwitcherMixin",
+		"LegacyLabyModScreenOverlayMixin",
 		"LegacyMinecraftOverlayMixin",
 		"LegacyMusicManagerMixin",
 		${legacy_screen_120_mixin}
@@ -15,7 +17,8 @@
 		${version_level_loading_screen_mixin}
 		${legacy_screen_mixin}
 		"LegacyTitleScreenMixin",
-		"LegacyTitleScreenCompatOverlayMixin"
+		"LegacyTitleScreenCompatOverlayMixin",
+		"LegacyTitleWidgetAlphaMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

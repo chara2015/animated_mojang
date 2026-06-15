@@ -7,6 +7,8 @@
 		"LoadingOverlayTextureMixin",
 		"LoadingOverlayMixin",
 		"GameRendererMixin",
+		"InGameAccountSwitcherMixin",
+		"LabyModScreenOverlayMixin",
 		"ScreenMixin",
 		"TitleScreenMixin",
 		"TitleScreenCompatOverlayMixin",

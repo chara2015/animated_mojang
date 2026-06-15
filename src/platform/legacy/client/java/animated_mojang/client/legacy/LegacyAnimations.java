@@ -124,8 +124,19 @@ public final class LegacyAnimations {
 	}
 
 	public static boolean shouldHideThirdPartyTitleWidgets() {
+		return shouldHideTitleWidgets();
+	}
+
+	public static boolean shouldHidePostTitleOverlays() {
 		return titleStartedAt != -1L
 				&& titleElapsed() < OpeningTimeline.MENU_REVEAL_MILLIS + OpeningTimeline.MENU_FADE_MILLIS;
+	}
+
+	public static float getTitleWidgetAlpha() {
+		if (!AnimatedMojangConfig.isMinecraftTitleAnimationEnabled() || titleStartedAt == -1L) {
+			return 1.0F;
+		}
+		return OpeningTimeline.menuFade(titleElapsed());
 	}
 
 	public static void suppressMenuMusicUntilWidgetsAppear() {
@@ -231,7 +242,7 @@ public final class LegacyAnimations {
 				row * (float) TITLE_SOURCE_FRAME_HEIGHT, width, height, TITLE_SOURCE_WIDTH,
 				TITLE_SOURCE_FRAME_HEIGHT, TITLE_SOURCE_WIDTH, TITLE_SOURCE_TEXTURE_HEIGHT, color);
 		if (OpeningTimeline.shouldRevealMenu(titleElapsed())) {
-			renderEdition(graphics, logoScale, alpha * OpeningTimeline.menuFade(titleElapsed()));
+			renderEdition(graphics, logoScale, OpeningTimeline.menuFade(titleElapsed()));
 		}
 	}
 
