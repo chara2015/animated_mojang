@@ -61,6 +61,8 @@ public final class TitleOpeningController {
 	private static long forcedTransitionDuration;
 	private static boolean connectionFlowActive;
 	private static boolean wasInWorld;
+	private static boolean returningFromWorld;
+	private static boolean smoothWorldReturnTransition;
 
 	private TitleOpeningController() {
 	}
@@ -103,6 +105,7 @@ public final class TitleOpeningController {
 		}
 		if (wasInWorld) {
 			forcedTransitionDuration = 3000L;
+			returningFromWorld = true;
 			wasInWorld = false;
 		}
 		updateConnectionFlow(screen);
@@ -186,20 +189,24 @@ public final class TitleOpeningController {
 	}
 
 	private static void updateScreenCamera(long now, Screen screen) {
-		if (screen.getClass() != lastScreenClass) {
+		if (screen.getClass() != lastScreenClass || returningFromWorld) {
 			updateCameraInterpolation(now, screen);
-			System.arraycopy(currentCamera, 0, transitionStartCamera, 0, currentCamera.length);
+			float[] start = returningFromWorld ? OPENER_START_CAMERA : currentCamera;
+			System.arraycopy(start, 0, transitionStartCamera, 0, start.length);
+			System.arraycopy(start, 0, currentCamera, 0, start.length);
 			float[] target = cameraForScreen(screen);
 			System.arraycopy(target, 0, transitionTargetCamera, 0, target.length);
 			screenTransitionStartedAt = now;
-			long targetDuration = isLongScreenTransition(screen) ? 3000L : SCREEN_TRANSITION_MS;
+			long targetDuration = transitionDuration(screen);
 			screenTransitionDuration = Math.max(targetDuration, forcedTransitionDuration);
+			smoothWorldReturnTransition = returningFromWorld;
 			if (forcedTransitionDuration > 0L) {
 				forcedTransitionDuration = 0L;
 			}
 			if (targetDuration >= 1000L) {
 				forcedTransitionDuration = targetDuration;
 			}
+			returningFromWorld = false;
 			lastScreenClass = screen.getClass();
 		}
 		updateCameraInterpolation(now, screen);
@@ -211,7 +218,8 @@ public final class TitleOpeningController {
 			return;
 		}
 		float raw = Mth.clamp((now - screenTransitionStartedAt) / (float) screenTransitionDuration, 0.0F, 1.0F);
-		float progress = cubicBezier(raw, CURVE_X1, CURVE_Y1, CURVE_X2, CURVE_Y2);
+		float progress = smoothWorldReturnTransition ? smootherStep(raw)
+				: cubicBezier(raw, CURVE_X1, CURVE_Y1, CURVE_X2, CURVE_Y2);
 		for (int i = 0; i < currentCamera.length; i++) {
 			currentCamera[i] = Mth.lerp(progress, transitionStartCamera[i], transitionTargetCamera[i]);
 		}
@@ -233,6 +241,26 @@ public final class TitleOpeningController {
 
 	private static boolean isLongScreenTransition(Screen screen) {
 		return connectionFlowActive || screen instanceof ConnectScreen || screen instanceof DisconnectedScreen;
+	}
+
+	private static float smootherStep(float progress) {
+		float clamped = Mth.clamp(progress, 0.0F, 1.0F);
+		return clamped * clamped * clamped * (clamped * (clamped * 6.0F - 15.0F) + 10.0F);
+	}
+
+	private static long transitionDuration(Screen screen) {
+		if (isLongScreenTransition(screen)
+				|| screen instanceof JoinMultiplayerScreen && isTransitionScreenClass(lastScreenClass)) {
+			return 3000L;
+		}
+		return SCREEN_TRANSITION_MS;
+	}
+
+	private static boolean isTransitionScreenClass(Class<?> screenClass) {
+		return GenericMessageScreen.class.isAssignableFrom(screenClass)
+				|| GenericWaitingScreen.class.isAssignableFrom(screenClass)
+				|| LevelLoadingScreen.class.isAssignableFrom(screenClass)
+				|| ProgressScreen.class.isAssignableFrom(screenClass);
 	}
 
 	private static void updateConnectionFlow(Screen screen) {

@@ -256,7 +256,8 @@ public final class VersionedSchematicScene {
 		Matrix4f viewProjection = new Matrix4f().perspective(50.0F * Mth.DEG_TO_RAD, aspect, 0.05F, 1024.0F)
 				.mul(pose.viewMatrix);
 		for (CaveParticle particle : particles) {
-			if (occludedByBlock(pose, particle.renderX(), particle.renderY(), particle.renderZ(),
+			boolean partialOcclusion = particleNeedsPartialOcclusion(particle);
+			if (!partialOcclusion && occludedByBlock(pose, particle.renderX(), particle.renderY(), particle.renderZ(),
 					particle.sourceX, particle.sourceY, particle.sourceZ)) {
 				continue;
 			}
@@ -291,10 +292,53 @@ public final class VersionedSchematicScene {
 				textureSize = PARTICLE_SMOKE_SIZE;
 				color = 0xFF000000 | gray << 16 | gray << 8 | gray;
 			}
-			graphics.blit(RenderPipelines.GUI_TEXTURED, PARTICLE_TEXTURE, x - size, y - size,
+			renderParticle(graphics, pose, particle, partialOcclusion, sizeScale, x, y, size,
+					textureU, textureV, textureSize, color);
+		}
+	}
+
+	private void renderParticle(GuiGraphics graphics, CameraPose pose, CaveParticle particle,
+			boolean partialOcclusion, float sizeScale, int centerX, int centerY, int size,
+			int textureU, int textureV, int textureSize, int color) {
+		if (!partialOcclusion) {
+			graphics.blit(RenderPipelines.GUI_TEXTURED, PARTICLE_TEXTURE, centerX - size, centerY - size,
 					textureU, textureV, size * 2, size * 2, textureSize, textureSize,
 					PARTICLE_ATLAS_SIZE, PARTICLE_ATLAS_SIZE, color);
+			return;
 		}
+		int diameter = size * 2;
+		double radius = PARTICLE_WORLD_SCALE * sizeScale;
+		for (int py = 0; py < diameter; py++) {
+			double vertical = ((py + 0.5D) / diameter * 2.0D - 1.0D) * radius;
+			for (int px = 0; px < diameter; px++) {
+				double horizontal = ((px + 0.5D) / diameter * 2.0D - 1.0D) * radius;
+				double worldX = particle.x + pose.rightX * horizontal - pose.upX * vertical;
+				double worldY = particle.y - pose.upY * vertical;
+				double worldZ = particle.z + pose.rightZ * horizontal - pose.upZ * vertical;
+				if (occludedByBlock(pose, worldX, worldY, worldZ,
+						particle.sourceX, particle.sourceY, particle.sourceZ)) {
+					continue;
+				}
+				int sourceX = textureU + px * textureSize / diameter;
+				int sourceY = textureV + py * textureSize / diameter;
+				graphics.blit(RenderPipelines.GUI_TEXTURED, PARTICLE_TEXTURE, centerX - size + px, centerY - size + py,
+						sourceX, sourceY, 1, 1, 1, 1, PARTICLE_ATLAS_SIZE, PARTICLE_ATLAS_SIZE, color);
+			}
+		}
+	}
+
+	private boolean particleNeedsPartialOcclusion(CaveParticle particle) {
+		for (int y = Math.max(0, particle.sourceY - 2); y <= Math.min(height - 1, particle.sourceY + 2); y++) {
+			for (int z = Math.max(0, particle.sourceZ - 2); z <= Math.min(length - 1, particle.sourceZ + 2); z++) {
+				for (int x = Math.max(0, particle.sourceX - 2); x <= Math.min(width - 1, particle.sourceX + 2); x++) {
+					String state = blockStates[index(width, length, x, y, z)];
+					if (state != null && (state.contains("cobweb") || isFence(state))) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 	private void tickParticles(CameraPose pose, int currentTick) {
