@@ -14,7 +14,8 @@ public final class LegacyTitleScreenCompatOverlayMixin {
 	@Inject(method = "render", at = @At("TAIL"))
 	private void animatedMojang$coverEarlyThirdPartyWidgets(GuiGraphics graphics, int mouseX, int mouseY,
 			float delta, CallbackInfo ci) {
-		if (AnimatedMojangConfig.isMinecraftTitleAnimationEnabled() && LegacyAnimations.shouldHideTitleWidgets()) {
+		if (AnimatedMojangConfig.isMinecraftTitleAnimationEnabled()
+				&& LegacyAnimations.shouldHideThirdPartyTitleWidgets()) {
 			LegacyAnimations.renderTitleBackground(graphics);
 			LegacyAnimations.renderScreenEffects(graphics);
 			LegacyAnimations.renderTitle(graphics);

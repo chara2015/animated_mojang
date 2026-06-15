@@ -85,6 +85,11 @@ public final class TitleOpeningController {
 				&& getOpeningElapsedMillis() < MENU_REVEAL_MS;
 	}
 
+	public static boolean shouldHideThirdPartyTitleWidgets() {
+		return AnimatedMojangConfig.isMinecraftTitleAnimationEnabled() && isOpeningPlaying()
+				&& getOpeningElapsedMillis() < MENU_REVEAL_MS + OpeningTimeline.MENU_FADE_MILLIS;
+	}
+
 	public static boolean shouldRenderOpeningBackground() {
 		return openingPlayed;
 	}

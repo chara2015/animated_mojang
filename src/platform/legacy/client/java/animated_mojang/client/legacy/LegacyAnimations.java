@@ -123,6 +123,11 @@ public final class LegacyAnimations {
 		return titleStartedAt != -1L && !OpeningTimeline.shouldRevealMenu(titleElapsed());
 	}
 
+	public static boolean shouldHideThirdPartyTitleWidgets() {
+		return titleStartedAt != -1L
+				&& titleElapsed() < OpeningTimeline.MENU_REVEAL_MILLIS + OpeningTimeline.MENU_FADE_MILLIS;
+	}
+
 	public static void suppressMenuMusicUntilWidgetsAppear() {
 		if (!menuMusicSuppressed
 				&& loadingStartedAt != -1L && !isLoadingAnimationFinished()) {

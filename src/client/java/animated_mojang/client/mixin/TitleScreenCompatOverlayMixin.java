@@ -13,7 +13,7 @@ public class TitleScreenCompatOverlayMixin {
 	@Inject(method = "extractRenderState", at = @At("TAIL"))
 	private void animatedMojang$coverEarlyThirdPartyWidgets(GuiGraphicsExtractor graphics, int mouseX, int mouseY,
 			float delta, CallbackInfo ci) {
-		if (TitleOpeningController.shouldHideTitleWidgets()) {
+		if (TitleOpeningController.shouldHideThirdPartyTitleWidgets()) {
 			TitleOpeningController.renderHiddenTitleOverlay(graphics);
 		}
 	}
