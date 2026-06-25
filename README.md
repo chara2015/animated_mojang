@@ -1,4 +1,4 @@
-# Animated_Mojang
+# labymod_menu
 
 ## Setup
 

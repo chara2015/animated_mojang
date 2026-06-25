@@ -1,0 +1,23 @@
+{
+	"required": true,
+	"package": "labymod_menu.client.mixin",
+	"compatibilityLevel": "${java_compatibility_level}",
+	"client": [
+		"LoadingOverlayAccessor",
+		"LoadingOverlayTextureMixin",
+		"LoadingOverlayMixin",
+		"MusicManagerMixin",
+		"GameRendererMixin",
+		"InGameAccountSwitcherMixin",
+		"LabyModScreenOverlayMixin",
+		"ScreenMixin",
+		"TitleScreenMixin",
+		"TitleScreenCompatOverlayMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"overwrites": {
+		"requireAnnotations": true
+	}
+}

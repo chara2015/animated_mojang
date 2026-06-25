@@ -1,0 +1,12 @@
+{
+	"required": true,
+	"package": "labymod_menu.mixin",
+	"compatibilityLevel": "${java_compatibility_level}",
+	"mixins": [],
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"overwrites": {
+		"requireAnnotations": true
+	}
+}

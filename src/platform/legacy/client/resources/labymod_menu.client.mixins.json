@@ -1,0 +1,27 @@
+{
+	"required": true,
+	"package": "labymod_menu.client.mixin",
+	"compatibilityLevel": "${java_compatibility_level}",
+	"client": [
+		"LegacyLoadingOverlayAccessor",
+		"LegacyLoadingOverlayBackgroundMixin",
+		"LegacyLoadingOverlayMixin",
+		"LegacyInGameAccountSwitcherMixin",
+		"LegacyLabyModScreenOverlayMixin",
+		"LegacyMinecraftOverlayMixin",
+		"LegacyMusicManagerMixin",
+		${legacy_screen_120_mixin}
+		${version_gui_accessor_mixin}
+		${version_game_renderer_mixin}
+		${version_screen_effects_mixin}
+		${version_selection_list_mixin}
+		${version_level_loading_screen_mixin}
+		${legacy_screen_mixin}
+		"LegacyTitleScreenMixin",
+		"LegacyTitleScreenCompatOverlayMixin",
+		"LegacyTitleWidgetAlphaMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}

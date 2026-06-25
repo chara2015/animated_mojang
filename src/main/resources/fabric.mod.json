@@ -13,23 +13,23 @@
 		"issues": "${mod_issues}"
 	},
 	"license": "${mod_license}",
-	"icon": "assets/animated_mojang/icon.png",
+	"icon": "assets/labymod_menu/icon.png",
 	"environment": "client",
 	"entrypoints": {
 		"main": [
-			"animated_mojang.AnimatedMojangMod"
+			"labymod_menu.LabyModMenuMod"
 		],
 		"client": [
-			"animated_mojang.client.AnimatedMojangClient"
+			"labymod_menu.client.LabyModMenuClient"
 		],
 		"modmenu": [
-			"animated_mojang.client.config.ModMenuIntegration"
+			"labymod_menu.client.config.ModMenuIntegration"
 		]
 	},
 	"mixins": [
-		"animated_mojang.mixins.json",
+		"labymod_menu.mixins.json",
 		{
-			"config": "animated_mojang.client.mixins.json",
+			"config": "labymod_menu.client.mixins.json",
 			"environment": "client"
 		}
 	],
@@ -41,5 +41,8 @@
 	},
 	"suggests": {
 		"modmenu": "*"
+	},
+	"breaks": {
+		"animated_mojang": "*"
 	}
 }

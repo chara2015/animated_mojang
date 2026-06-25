@@ -38,4 +38,4 @@ gradle.beforeProject {
 	}
 }
 
-rootProject.name = "animated_mojang"
+rootProject.name = "labymod_menu"

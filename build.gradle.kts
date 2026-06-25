@@ -12,7 +12,7 @@ val localVersionProperties = Properties().apply {
 	if (propertiesFile.isFile) propertiesFile.inputStream().use { load(it) }
 }
 
-val metadataSource = rootProject.file("src/main/java/animated_mojang/ModMetadata.java")
+val metadataSource = rootProject.file("src/main/java/labymod_menu/ModMetadata.java")
 fun metadataConstant(name: String): String {
 	val pattern = Regex("""public\s+static\s+final\s+String\s+$name\s*=\s*"([^"]+)";""")
 	return pattern.find(metadataSource.readText())?.groupValues?.get(1)
@@ -26,14 +26,28 @@ fun versionedProperty(name: String): String {
 		?: throw GradleException("Missing versioned property '$name' for ${project.path}")
 }
 
+fun optionalVersionedProperty(name: String): String? =
+	localVersionProperties.getProperty(name) ?: findProperty(name)?.toString()
+
 val isExplicitlyRequested = gradle.startParameter.taskNames.any { taskName ->
 	taskName == project.path || taskName.startsWith("${project.path}:")
 }
+val isRootLifecycleRequested = gradle.startParameter.taskNames.any { taskName ->
+	taskName in setOf("build", "assemble", "check", "clean")
+}
 
-if (stonecutter.current.isActive || isExplicitlyRequested) {
+if (stonecutter.current.isActive || isExplicitlyRequested || isRootLifecycleRequested) {
 val minecraftVersion = versionedProperty("minecraft_version")
+// Most projects use the Minecraft version as their platform-source directory.  The
+// 1.20.5 Stonecutter target intentionally builds against 1.20.6, so it overrides
+// this value to keep its compatibility implementation with the target itself.
+val platformSourceVersion = localVersionProperties.getProperty("platform_source_version") ?: minecraftVersion
 val isMinecraft26Plus = minecraftVersion.substringBefore('.').toIntOrNull()?.let { it >= 26 } == true
 val isIdentifierEra = isMinecraft26Plus || minecraftVersion == "1.21.11"
+// Older releases share the reflective legacy renderer.  Only releases that opt
+// in here receive the extra render-pipeline mixins required by their native GUI
+// renderer, rather than selecting them from a hard-coded Minecraft version.
+val usesAdvancedLegacySceneMixins = optionalVersionedProperty("advanced_legacy_scene_mixins")?.toBoolean() == true
 val modId = metadataConstant("MOD_ID")
 val modName = metadataConstant("MOD_NAME")
 val modVersion = metadataConstant("MOD_VERSION")
@@ -78,24 +92,24 @@ if (!isMinecraft26Plus) {
 		))
 		resources.setSrcDirs(listOf(rootProject.file("src/platform/legacy/client/resources")))
 		if (minecraftVersion != "1.20") {
-			java.exclude("animated_mojang/client/mixin/LegacyScreen120Mixin.java")
+			java.exclude("labymod_menu/client/mixin/LegacyScreen120Mixin.java")
 		} else {
-			java.exclude("animated_mojang/client/mixin/LegacyScreenMixin.java")
+			java.exclude("labymod_menu/client/mixin/LegacyScreenMixin.java")
 		}
 	}
 	sourceSets.main {
-		resources.exclude("animated_mojang.client.mixins.json")
+		resources.exclude("labymod_menu.client.mixins.json")
 	}
 }
 
 sourceSets.named("client") {
 	java.srcDir(rootProject.file("src/shared_client/java"))
-	java.srcDir(rootProject.file("src/platform/versions/${minecraftVersion.replace('.', '_')}/client/java"))
+	java.srcDir(rootProject.file("src/platform/versions/${platformSourceVersion.replace('.', '_')}/client/java"))
 }
 
 if (!isIdentifierEra) {
 	sourceSets.main {
-		java.exclude("animated_mojang/sound/**")
+		java.exclude("labymod_menu/sound/**")
 	}
 }
 
@@ -125,10 +139,11 @@ tasks.withType<ProcessResources>().configureEach {
 	inputs.property("javaCompatibilityLevel", javaCompatibilityLevel)
 	inputs.property("legacyScreen120Mixin", minecraftVersion == "1.20")
 	inputs.property("legacyScreenMixin", minecraftVersion != "1.20")
-	inputs.property("versionGuiAccessorMixin", minecraftVersion == "1.21.11")
-	inputs.property("versionGameRendererMixin", minecraftVersion == "1.21.11")
-	inputs.property("versionScreenEffectsMixin", minecraftVersion == "1.21.11")
-	inputs.property("versionLevelLoadingScreenMixin", minecraftVersion == "1.21.11")
+	inputs.property("versionGuiAccessorMixin", usesAdvancedLegacySceneMixins)
+	inputs.property("versionGameRendererMixin", usesAdvancedLegacySceneMixins)
+	inputs.property("versionScreenEffectsMixin", usesAdvancedLegacySceneMixins)
+	inputs.property("versionSelectionListMixin", usesAdvancedLegacySceneMixins)
+	inputs.property("versionLevelLoadingScreenMixin", usesAdvancedLegacySceneMixins)
 	inputs.property("modId", modId)
 	inputs.property("modName", modName)
 	inputs.property("modDescription", modDescription)
@@ -154,16 +169,16 @@ tasks.withType<ProcessResources>().configureEach {
 		)
 	}
 
-	filesMatching("animated_mojang*.mixins.json") {
+	filesMatching("labymod_menu*.mixins.json") {
 		expand(
 			"java_compatibility_level" to javaCompatibilityLevel,
 			"legacy_screen_120_mixin" to if (minecraftVersion == "1.20") "\"LegacyScreen120Mixin\"," else "",
 			"legacy_screen_mixin" to if (minecraftVersion != "1.20") "\"LegacyScreenMixin\"," else "",
-			"version_gui_accessor_mixin" to if (minecraftVersion == "1.21.11") "\"GuiGraphicsAccessor\"," else "",
-			"version_game_renderer_mixin" to if (minecraftVersion == "1.21.11") "\"VersionedGameRendererMixin\"," else "",
-			"version_screen_effects_mixin" to if (minecraftVersion == "1.21.11") "\"VersionedScreenEffectsMixin\"," else "",
-			"version_selection_list_mixin" to if (minecraftVersion == "1.21.11") "\"VersionedSelectionListMixin\"," else "",
-			"version_level_loading_screen_mixin" to if (minecraftVersion == "1.21.11") "\"VersionedLevelLoadingScreenMixin\"," else ""
+			"version_gui_accessor_mixin" to if (usesAdvancedLegacySceneMixins) "\"GuiGraphicsAccessor\"," else "",
+			"version_game_renderer_mixin" to if (usesAdvancedLegacySceneMixins) "\"VersionedGameRendererMixin\"," else "",
+			"version_screen_effects_mixin" to if (usesAdvancedLegacySceneMixins) "\"VersionedScreenEffectsMixin\"," else "",
+			"version_selection_list_mixin" to if (usesAdvancedLegacySceneMixins) "\"VersionedSelectionListMixin\"," else "",
+			"version_level_loading_screen_mixin" to if (usesAdvancedLegacySceneMixins) "\"VersionedLevelLoadingScreenMixin\"," else ""
 		)
 	}
 }
@@ -213,6 +228,9 @@ publishing {
 }
 } else {
 	tasks.configureEach {
+		if (name == "stonecutterPrepareTest") {
+			enabled = false
+		}
 		if (!name.startsWith("stonecutter")) {
 			enabled = false
 		}
@@ -220,4 +238,12 @@ publishing {
 			setDependsOn(emptyList<Any>())
 		}
 	}
+}
+
+tasks.matching { it.name == "stonecutterPrepareTest" }.configureEach {
+	enabled = false
+}
+
+tasks.withType<Test>().configureEach {
+	enabled = false
 }
